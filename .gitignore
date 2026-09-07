@@ -1,0 +1,4 @@
+﻿# тестовые выгрузки контакта
+*.vcf
+!miran-davlatov.vcf
+!nozima/nozima-jumadullayeva.vcf
