@@ -376,46 +376,26 @@ body{
   text-transform:uppercase; letter-spacing:.18em;
 }
 
-/* ---------- Отзывы ---------- */
-.reviews{
-  position:relative; z-index:1;
-  max-width:520px; margin-inline:auto;
-  padding:clamp(38px, 7vh, 66px) 20px 0;
+/* Финальная карточка маршрута: шире, подпись по центру, точка на нити крупнее.
+   Это конец нити — дальше уже весь мир. */
+.route li.finale{ margin-top:clamp(20px, 3.4vh, 30px); }
+.route li.finale::before{
+  width:11px; height:11px;
+  top:22px; left:-29.5px;
+  box-shadow:0 0 0 4px var(--bg), 0 0 18px rgba(201,162,39,.9);
 }
-.rev-list{ display:flex; flex-direction:column; gap:clamp(11px, 2vh, 16px); }
-.rev{
-  position:relative;
-  margin:0;
-  padding:17px 18px 15px;
-  border:1px solid var(--surface-line);
-  border-radius:16px;
-  background:rgba(255,255,255,.028);
-  opacity:0; transform:translateY(16px);
-  transition:opacity .7s var(--ease), transform .7s var(--ease);
+.finale .stop{ aspect-ratio:16/9; border-color:var(--line); }
+.finale .stop::after{
+  background:linear-gradient(to top, rgba(6,6,9,.86) 0%, rgba(6,6,9,.45) 55%, rgba(6,6,9,.2) 100%);
 }
-.rev.is-in{ opacity:1; transform:none; }
-.rev::before{                      /* декоративная кавычка */
-  content:'”';
-  position:absolute; top:0; right:16px;
-  font-family:'Playfair Display', Georgia, serif;
-  font-size:50px; line-height:1;
-  color:var(--gold); opacity:.2;
-  pointer-events:none;
+.finale .stop b{
+  left:0; right:0; bottom:auto; top:50%;
+  translate:0 -50%;
+  text-align:center;
+  font-size:clamp(19px, 5.4vw, 24px);
+  letter-spacing:.02em;
+  text-shadow:0 2px 18px rgba(0,0,0,.6);
 }
-.rev blockquote{
-  margin:0 0 11px;
-  font-size:clamp(12.5px, 3.4vw, 13.5px);
-  line-height:1.6;
-  color:var(--text); opacity:.92;
-}
-.rev figcaption{ display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 9px; }
-.rev b{
-  color:var(--gold);
-  font-size:clamp(10px, 2.8vw, 11px);
-  font-weight:500;
-  text-transform:uppercase; letter-spacing:.14em;
-}
-.rev small{ color:var(--muted); font-size:clamp(10px, 2.8vw, 11px); }
 
 /* ---------- Кнопка «поделиться» ---------- */
 .share{
@@ -511,7 +491,7 @@ body{
   html{ scroll-behavior:auto; }
   .reveal{ animation:none; opacity:1; }
   .scroll-hint{ animation:none; }
-  .route li, .rev{ opacity:1; transform:none; }   /* блоки видны без прокрутки */
+  .route li{ opacity:1; transform:none; }   /* остановки видны без прокрутки */
   *{ transition-duration:.01ms !important; }
 }
 
@@ -574,15 +554,6 @@ body{
     <ol class="route" id="routeList"></ol>
   </section>
 
-  <!-- Отзывы (тексты — в i18n) -->
-  <section class="reviews" id="reviews">
-    <header class="sec-head">
-      <span class="sec-kicker" id="revKicker"></span>
-      <h2 class="sec-title" id="revTitle"></h2>
-    </header>
-    <div class="rev-list" id="revList"></div>
-  </section>
-
   <!-- Закрывающий блок: последнее слово и кнопка -->
   <section class="outro">
     <p class="outro-text" id="outroText"></p>
@@ -622,18 +593,14 @@ const CONFIG = {
         scrollAria:'Смотреть направления',
         routesKicker:'Направления', routesTitle:'Куда мы отправляем',
         cities:[
-          { city:'Дубай',    note:'ОАЭ' },
-          { city:'Стамбул',  note:'Турция' },
-          { city:'Мальдивы', note:'Индийский океан' },
-          { city:'Париж',    note:'Франция' },
-          { city:'Греция',   note:'Эгейское море' }
+          { city:'Мальдивы',  note:'Индийский океан' },
+          { city:'Турция',    note:'Стамбул и побережье' },
+          { city:'ОАЭ',       note:'Дубай' },
+          { city:'Индонезия', note:'Бали' },
+          { city:'Египет',    note:'Красное море' },
+          { city:'Вьетнам',   note:'Халонг' }
         ],
-        revKicker:'Отзывы', revTitle:'Что говорят клиенты',
-        reviews:[
-          { text:'Здесь будет отзыв клиента: пара строк о том, как прошла поездка и что сделала Нозима.', name:'Имя клиента', trip:'Направление, год' },
-          { text:'Второй отзыв. Лучше всего работают короткие и конкретные: что было сложно и как это решили.', name:'Имя клиента', trip:'Направление, год' },
-          { text:'Третий отзыв. Достаточно трёх — больше их никто не читает.', name:'Имя клиента', trip:'Направление, год' }
-        ],
+        finale:'По всему миру',
         outro:'Расскажите, куда хотите поехать — соберу маршрут под вас.',
         share:'Поделиться визиткой',
         shareCopied:'Ссылка скопирована — отправьте её кому нужно.',
@@ -653,18 +620,14 @@ const CONFIG = {
         scrollAria:'Yoʻnalishlarni koʻrish',
         routesKicker:'Yoʻnalishlar', routesTitle:'Sizni qayerlarga yuboramiz',
         cities:[
-          { city:'Dubay',          note:'BAA' },
-          { city:'Istanbul',       note:'Turkiya' },
-          { city:'Maldiv orollari',note:'Hind okeani' },
-          { city:'Parij',          note:'Fransiya' },
-          { city:'Gretsiya',       note:'Egey dengizi' }
+          { city:'Maldiv orollari', note:'Hind okeani' },
+          { city:'Turkiya',         note:'Istanbul va sohil' },
+          { city:'BAA',             note:'Dubay' },
+          { city:'Indoneziya',      note:'Bali' },
+          { city:'Misr',            note:'Qizil dengiz' },
+          { city:'Vetnam',          note:'Halong' }
         ],
-        revKicker:'Sharhlar', revTitle:'Mijozlar nima deydi',
-        reviews:[
-          { text:'Bu yerda mijoz sharhi boʻladi: safar qanday oʻtgani va Nozima nima qilgani haqida ikki qator.', name:'Mijoz ismi', trip:'Yoʻnalish, yil' },
-          { text:'Ikkinchi sharh. Qisqa va aniq sharhlar eng yaxshi ishlaydi: nima qiyin boʻldi va qanday hal qilindi.', name:'Mijoz ismi', trip:'Yoʻnalish, yil' },
-          { text:'Uchinchi sharh. Uchtasi yetarli — koʻprogʻini hech kim oʻqimaydi.', name:'Mijoz ismi', trip:'Yoʻnalish, yil' }
-        ],
+        finale:'Butun dunyo boʻylab',
         outro:'Qayerga bormoqchi ekaningizni ayting — marshrutni siz uchun tuzaman.',
         share:'Vizitkani ulashish',
         shareCopied:'Havola nusxalandi — kerakli odamga yuboring.',
@@ -684,18 +647,14 @@ const CONFIG = {
         scrollAria:'See destinations',
         routesKicker:'Destinations', routesTitle:'Where we send you',
         cities:[
-          { city:'Dubai',    note:'UAE' },
-          { city:'Istanbul', note:'Türkiye' },
-          { city:'Maldives', note:'Indian Ocean' },
-          { city:'Paris',    note:'France' },
-          { city:'Greece',   note:'Aegean Sea' }
+          { city:'Maldives',  note:'Indian Ocean' },
+          { city:'Türkiye',   note:'Istanbul and the coast' },
+          { city:'UAE',       note:'Dubai' },
+          { city:'Indonesia', note:'Bali' },
+          { city:'Egypt',     note:'Red Sea' },
+          { city:'Vietnam',   note:'Ha Long' }
         ],
-        revKicker:'Reviews', revTitle:'What clients say',
-        reviews:[
-          { text:'A client review goes here: a couple of lines about the trip and what Nozima did.', name:'Client name', trip:'Destination, year' },
-          { text:'Second review. Short and specific ones work best: what was difficult and how it was solved.', name:'Client name', trip:'Destination, year' },
-          { text:'Third review. Three is enough — nobody reads more than that.', name:'Client name', trip:'Destination, year' }
-        ],
+        finale:'All over the world',
         outro:'Tell me where you want to go — I will build the route for you.',
         share:'Share this card',
         shareCopied:'Link copied — send it to anyone.',
@@ -776,12 +735,15 @@ const CONFIG = {
          Пустой items — секции на странице нет. --- */
   routes: {
     items: [
-      { img:'img/dubai.jpg' },
-      { img:'img/istanbul.jpg' },
       { img:'img/maldives.jpg' },
-      { img:'img/paris.jpg' },
-      { img:'img/greece.jpg' }
-    ]
+      { img:'img/istanbul.jpg' },
+      { img:'img/dubai.jpg' },
+      { img:'img/indonesia.jpg' },
+      { img:'img/egypt.jpg' },
+      { img:'img/vietnam.jpg' }
+    ],
+    // Финальная широкая карточка в конце маршрута. Подпись — в словарях (finale)
+    finale: 'img/world.jpg'
   },
 
   /* --- Скромная подпись-ссылка в самом низу: «хотите такую же визитку».
@@ -877,24 +839,16 @@ function applyTexts(){
     rk.textContent = d.routesKicker;
     document.getElementById('routesTitle').textContent = d.routesTitle;
     document.querySelectorAll('.route li').forEach(function(li, i){
+      if (li.classList.contains('finale')) {          // последняя карточка «по всему миру»
+        li.querySelector('b').textContent = d.finale;
+        li.querySelector('img').alt       = d.finale;
+        return;
+      }
       const city = (d.cities || [])[i];
       if (!city) return;
       li.querySelector('b').textContent     = city.city;
       li.querySelector('small').textContent = city.note || '';
       li.querySelector('img').alt           = city.city;
-    });
-  }
-
-  const vk = document.getElementById('revKicker');
-  if (vk) {
-    vk.textContent = d.revKicker;
-    document.getElementById('revTitle').textContent = d.revTitle;
-    document.querySelectorAll('.rev').forEach(function(fig, i){
-      const r = (d.reviews || [])[i];
-      if (!r) return;
-      fig.querySelector('blockquote').textContent = r.text;
-      fig.querySelector('b').textContent          = r.name;
-      fig.querySelector('small').textContent      = r.trip || '';
     });
   }
 
@@ -997,27 +951,24 @@ const ICONS = {
       list.appendChild(li);
     });
 
+    // Финальная широкая карточка «по всему миру» — последняя точка маршрута
+    if (routes.finale) {
+      const li  = document.createElement('li');
+      li.className = 'finale';
+      const fig = document.createElement('figure');
+      fig.className = 'stop';
+      const img = document.createElement('img');
+      img.src = routes.finale;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      fig.append(img, document.createElement('b'));
+      li.appendChild(fig);
+      list.appendChild(li);
+    }
+
     revealOnScroll(list.querySelectorAll('li'));
   } else {
     document.getElementById('routes').remove();
-  }
-
-  // Отзывы
-  // Каркас отзывов: количество берём из словаря языка
-  const revCount = (dict().reviews || []).length;
-  if (revCount) {
-    const box = document.getElementById('revList');
-    for (let i = 0; i < revCount; i++) {
-      const fig = document.createElement('figure');
-      fig.className = 'rev';
-      const cap = document.createElement('figcaption');
-      cap.append(document.createElement('b'), document.createElement('small'));
-      fig.append(document.createElement('blockquote'), cap);
-      box.appendChild(fig);
-    }
-    revealOnScroll(box.querySelectorAll('.rev'));
-  } else {
-    document.getElementById('reviews').remove();
   }
 
   // Кнопка «поделиться»: системное меню телефона, а если его нет — копирование ссылки
