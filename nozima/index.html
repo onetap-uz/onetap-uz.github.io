@@ -261,6 +261,35 @@ body{
   opacity:.8;
 }
 
+/* ---------- Переключатель языка ---------- */
+.langs{
+  position:absolute; z-index:3;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  right:16px;
+  display:flex; gap:2px;
+  padding:3px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:rgba(255,255,255,.03);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.langs button{
+  border:0; background:none; cursor:pointer;
+  padding:5px 9px;
+  border-radius:100px;
+  color:var(--muted);
+  font-family:'Inter', sans-serif;
+  font-size:10px; font-weight:500;
+  letter-spacing:.09em; text-transform:uppercase;
+  transition:color .2s var(--ease), background .2s var(--ease), transform .15s var(--ease);
+}
+.langs button[aria-pressed="true"]{
+  background:rgba(201,162,39,.16);
+  color:var(--gold);
+}
+.langs button:active{ transform:scale(.92); }
+.langs button:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:2px; }
+
 /* ---------- Стрелка «листайте дальше» ---------- */
 .scroll-hint{
   display:grid; place-items:center;
@@ -500,6 +529,9 @@ body{
   <main class="card">
     <div class="glow" aria-hidden="true"></div>
 
+    <!-- Переключатель языка (CONFIG.i18n) -->
+    <div class="langs" id="langs" role="group"></div>
+
     <section class="hero">
       <!-- 1. Фото -->
       <div class="avatar reveal" style="--d:60ms">
@@ -542,7 +574,7 @@ body{
     <ol class="route" id="routeList"></ol>
   </section>
 
-  <!-- Отзывы (CONFIG.reviews) -->
+  <!-- Отзывы (тексты — в i18n) -->
   <section class="reviews" id="reviews">
     <header class="sec-head">
       <span class="sec-kicker" id="revKicker"></span>
@@ -568,6 +600,112 @@ body{
    ========================================================================== */
 const CONFIG = {
 
+  /* ==========================================================================
+     ЯЗЫКИ. Всё, что человек читает на странице, живёт здесь.
+     Файл контакта (.vcf) намеренно НЕ переводится: он один на все языки,
+     иначе у одного человека в телефоне оказались бы три разных Нозимы.
+     Добавить язык — добавить блок в langs и код в order.
+     ========================================================================== */
+  i18n: {
+    fallback: 'ru',
+    order: ['ru', 'uz', 'en'],
+    langs: {
+
+      ru: {
+        label:'RU', groupLabel:'Язык',
+        name:'Нозима Жумадуллаева',
+        role:'Основатель · Travel-эксперт',
+        bio:'Ваш персональный эксперт по путешествиям — от идеи поездки до возвращения домой.',
+        ctaLabel:'Написать в Telegram',
+        whatsappText:'Здравствуйте! Я по визитке Porto Bello Tour — хочу подобрать поездку.',
+        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт', map:'Адрес' },
+        scrollAria:'Смотреть направления',
+        routesKicker:'Направления', routesTitle:'Куда мы отправляем',
+        cities:[
+          { city:'Дубай',    note:'ОАЭ' },
+          { city:'Стамбул',  note:'Турция' },
+          { city:'Мальдивы', note:'Индийский океан' },
+          { city:'Париж',    note:'Франция' },
+          { city:'Греция',   note:'Эгейское море' }
+        ],
+        revKicker:'Отзывы', revTitle:'Что говорят клиенты',
+        reviews:[
+          { text:'Здесь будет отзыв клиента: пара строк о том, как прошла поездка и что сделала Нозима.', name:'Имя клиента', trip:'Направление, год' },
+          { text:'Второй отзыв. Лучше всего работают короткие и конкретные: что было сложно и как это решили.', name:'Имя клиента', trip:'Направление, год' },
+          { text:'Третий отзыв. Достаточно трёх — больше их никто не читает.', name:'Имя клиента', trip:'Направление, год' }
+        ],
+        outro:'Расскажите, куда хотите поехать — соберу маршрут под вас.',
+        share:'Поделиться визиткой',
+        shareCopied:'Ссылка скопирована — отправьте её кому нужно.',
+        promo:'Хотите такую же визитку?',
+        toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
+        toastFail:'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.'
+      },
+
+      uz: {
+        label:'UZ', groupLabel:'Til',
+        name:'Nozima Jumadullayeva',
+        role:'Asoschi · Travel ekspert',
+        bio:'Sayohatlar boʻyicha shaxsiy ekspertingiz — safar gʻoyasidan uyga qaytguningizgacha.',
+        ctaLabel:'Telegramda yozish',
+        whatsappText:'Assalomu alaykum! Porto Bello Tour vizitkasi orqali yozyapman — sayohat tanlamoqchiman.',
+        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt', map:'Manzil' },
+        scrollAria:'Yoʻnalishlarni koʻrish',
+        routesKicker:'Yoʻnalishlar', routesTitle:'Sizni qayerlarga yuboramiz',
+        cities:[
+          { city:'Dubay',          note:'BAA' },
+          { city:'Istanbul',       note:'Turkiya' },
+          { city:'Maldiv orollari',note:'Hind okeani' },
+          { city:'Parij',          note:'Fransiya' },
+          { city:'Gretsiya',       note:'Egey dengizi' }
+        ],
+        revKicker:'Sharhlar', revTitle:'Mijozlar nima deydi',
+        reviews:[
+          { text:'Bu yerda mijoz sharhi boʻladi: safar qanday oʻtgani va Nozima nima qilgani haqida ikki qator.', name:'Mijoz ismi', trip:'Yoʻnalish, yil' },
+          { text:'Ikkinchi sharh. Qisqa va aniq sharhlar eng yaxshi ishlaydi: nima qiyin boʻldi va qanday hal qilindi.', name:'Mijoz ismi', trip:'Yoʻnalish, yil' },
+          { text:'Uchinchi sharh. Uchtasi yetarli — koʻprogʻini hech kim oʻqimaydi.', name:'Mijoz ismi', trip:'Yoʻnalish, yil' }
+        ],
+        outro:'Qayerga bormoqchi ekaningizni ayting — marshrutni siz uchun tuzaman.',
+        share:'Vizitkani ulashish',
+        shareCopied:'Havola nusxalandi — kerakli odamga yuboring.',
+        promo:'Shunday vizitka xohlaysizmi?',
+        toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
+        toastFail:'Kontaktni ochib boʻlmadi. Sahifani Safari yoki Chromeda oching va qayta urinib koʻring.'
+      },
+
+      en: {
+        label:'EN', groupLabel:'Language',
+        name:'Nozima Jumadullayeva',
+        role:'Founder & Travel Consultant',
+        bio:'Your personal travel expert — from the first idea to the way home.',
+        ctaLabel:'Message on Telegram',
+        whatsappText:'Hello! I found your Porto Bello Tour card — I would like to plan a trip.',
+        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website', map:'Address' },
+        scrollAria:'See destinations',
+        routesKicker:'Destinations', routesTitle:'Where we send you',
+        cities:[
+          { city:'Dubai',    note:'UAE' },
+          { city:'Istanbul', note:'Türkiye' },
+          { city:'Maldives', note:'Indian Ocean' },
+          { city:'Paris',    note:'France' },
+          { city:'Greece',   note:'Aegean Sea' }
+        ],
+        revKicker:'Reviews', revTitle:'What clients say',
+        reviews:[
+          { text:'A client review goes here: a couple of lines about the trip and what Nozima did.', name:'Client name', trip:'Destination, year' },
+          { text:'Second review. Short and specific ones work best: what was difficult and how it was solved.', name:'Client name', trip:'Destination, year' },
+          { text:'Third review. Three is enough — nobody reads more than that.', name:'Client name', trip:'Destination, year' }
+        ],
+        outro:'Tell me where you want to go — I will build the route for you.',
+        share:'Share this card',
+        shareCopied:'Link copied — send it to anyone.',
+        promo:'Want a card like this?',
+        toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
+        toastFail:'Could not open the contact. Open the page in Safari or Chrome and try again.'
+      }
+    }
+  },
+
   /* --- Фирменные цвета (перезаписывают CSS-переменные) --- */
   theme: {
     bg:       '#0B0B0C',
@@ -586,9 +724,9 @@ const CONFIG = {
     lastName:      'Jumadullayeva',
     phoneticFirst: 'Нозима',                // кириллица внутри контакта
     phoneticLast:  'Жумадуллаева',
-    title:         'Founder & Travel Consultant',
-    company:       'Porto Bello Tour',
-    bio:           'Ваш персональный эксперт по путешествиям — от идеи поездки до возвращения домой.'
+    title:         'Founder & Travel Consultant',   // должность внутри контакта
+    company:       'Porto Bello Tour'
+    // Имя, должность и био НА СТРАНИЦЕ берутся из i18n — их правьте там
   },
 
   /* --- Бренд --- */
@@ -629,63 +767,33 @@ const CONFIG = {
          Telegram не поддерживает предзаполненный текст в личных чатах
          (параметр ?text= работает только у ботов), поэтому чат открывается пустым. --- */
   cta: {
-    id:    'telegram',                      // иконка берётся из ICONS по этому id
-    label: 'Написать в Telegram',
-    href:  c => c.telegram
+    id:   'telegram',                       // иконка берётся из ICONS по этому id
+    href: c => c.telegram                   // подпись — в словарях i18n
   },
 
-  /* --- Вторая секция: маршрут с остановками.
-         Сейчас это направления с фотографиями из открытых источников.
-         Когда появятся согласованные кадры клиентов из поездок — просто
-         замените файлы в папке img и подписи ниже. Пустой items — секции нет. --- */
+  /* --- Вторая секция: маршрут. Здесь только файлы фотографий,
+         названия городов лежат в словарях языков (cities).
+         Пустой items — секции на странице нет. --- */
   routes: {
-    kicker: 'Направления',
-    title:  'Куда мы отправляем',
     items: [
-      { img:'img/dubai.jpg',    city:'Дубай',    note:'ОАЭ' },
-      { img:'img/istanbul.jpg', city:'Стамбул',  note:'Турция' },
-      { img:'img/maldives.jpg', city:'Мальдивы', note:'Индийский океан' },
-      { img:'img/paris.jpg',    city:'Париж',    note:'Франция' },
-      { img:'img/greece.jpg',   city:'Греция',   note:'Эгейское море' }
+      { img:'img/dubai.jpg' },
+      { img:'img/istanbul.jpg' },
+      { img:'img/maldives.jpg' },
+      { img:'img/paris.jpg' },
+      { img:'img/greece.jpg' }
     ]
-  },
-
-  /* --- Отзывы. СЕЙЧАС ЗДЕСЬ ЗАГЛУШКИ: текст написан как шаблон, а не как
-         чужие слова — выдуманный отзыв с настоящим именем это враньё,
-         которое клиент однажды заметит. Возьмите у Нозимы реальные слова
-         и замените. Чтобы временно спрятать блок целиком: items: []. --- */
-  reviews: {
-    kicker: 'Отзывы',
-    title:  'Что говорят клиенты',
-    items: [
-      { text:'Здесь будет отзыв клиента: пара строк о том, как прошла поездка и что сделала Нозима.', name:'Имя клиента', trip:'Направление, год' },
-      { text:'Второй отзыв. Лучше всего работают короткие и конкретные: что было сложно и как это решили.', name:'Имя клиента', trip:'Направление, год' },
-      { text:'Третий отзыв. Достаточно трёх — больше их никто не читает.', name:'Имя клиента', trip:'Направление, год' }
-    ]
-  },
-
-  /* --- Закрывающий блок под маршрутом --- */
-  outro: {
-    text: 'Расскажите, куда хотите поехать — соберу маршрут под вас.'
   },
 
   /* --- Скромная подпись-ссылка в самом низу: «хотите такую же визитку».
          Не спорит с главной кнопкой, но даёт переход к автору.
          Убрать у клиента, который этого не хочет: поставить url пустым. --- */
   promo: {
-    text: 'Хотите такую же визитку?',
     url:  'https://onetap-uz.github.io/'
   },
 
-  /* --- Тексты интерфейса --- */
+  /* --- Служебное. Все видимые тексты живут в i18n выше. --- */
   ui: {
-    // Подсказки показываются ТОЛЬКО когда кнопка реально не может сработать.
-    // При нормальном нажатии никаких надписей нет: телефон сам открывает карточку контакта.
-    shareLabel:  'Поделиться визиткой',
-    shareCopied: 'Ссылка скопирована — отправьте её кому нужно.',
-    toastInApp:  'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
-    toastFail:   'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.',
-    vcfFileName: 'Nozima_Jumadullayeva'     // имя файла без расширения
+    vcfFileName: 'Nozima_Jumadullayeva'     // имя файла контакта без расширения
   },
 
   /* --- Фото: page — аватар на странице, vcard — облегчённая копия для контакта --- */
@@ -705,6 +813,106 @@ const CONFIG = {
     { id:'map',         label:'Адрес',             href: c => c.maps }
   ]
 };
+
+/* ============================================================================
+   ЯЗЫК СТРАНИЦЫ
+   Выбор запоминается в браузере посетителя. При первом заходе берём язык
+   телефона, а если он не из наших — язык по умолчанию.
+   ========================================================================== */
+const LANG_KEY = 'pb-lang';
+let LANG = (function pickLang(){
+  const langs = CONFIG.i18n.langs;
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && langs[saved]) return saved;
+  } catch (e) { /* приватный режим — просто идём дальше */ }
+  const nav = (navigator.language || '').slice(0, 2).toLowerCase();
+  if (langs[nav]) return nav;
+  return CONFIG.i18n.fallback;
+})();
+
+/** Словарь текущего языка. */
+function dict(){
+  return CONFIG.i18n.langs[LANG] || CONFIG.i18n.langs[CONFIG.i18n.fallback];
+}
+
+/** Смена языка: без перезагрузки, страница просто переписывает свои тексты. */
+function setLang(code){
+  if (!CONFIG.i18n.langs[code] || code === LANG) return;
+  LANG = code;
+  try { localStorage.setItem(LANG_KEY, code); } catch (e) { /* не смогли запомнить — не беда */ }
+  applyTexts();
+}
+
+/** Подставляет все тексты выбранного языка в уже построенную страницу. */
+function applyTexts(){
+  const d = dict(), b = CONFIG.brand, c = CONFIG.contacts;
+
+  document.documentElement.lang = LANG;
+  document.title = d.name + ' — ' + b.name;
+
+  const photo = document.getElementById('photo');
+  if (photo) photo.alt = d.name + ' — ' + d.role;
+
+  document.getElementById('name').textContent = d.name;
+  document.getElementById('role').textContent = d.role;
+  document.getElementById('bio').textContent  = d.bio;
+
+  document.querySelectorAll('.cta span').forEach(function(el){ el.textContent = d.ctaLabel; });
+
+  // Подписи круглых кнопок + текст, с которым открывается WhatsApp
+  document.querySelectorAll('.links a').forEach(function(a){
+    const label = d.actions && d.actions[a.dataset.id];
+    if (label) { a.setAttribute('aria-label', label); a.title = label; }
+    if (a.dataset.id === 'whatsapp' && c.whatsapp) {
+      a.href = c.whatsapp + (d.whatsappText ? '?text=' + encodeURIComponent(d.whatsappText) : '');
+    }
+  });
+
+  const hint = document.querySelector('.scroll-hint');
+  if (hint) hint.setAttribute('aria-label', d.scrollAria);
+
+  const rk = document.getElementById('routesKicker');
+  if (rk) {
+    rk.textContent = d.routesKicker;
+    document.getElementById('routesTitle').textContent = d.routesTitle;
+    document.querySelectorAll('.route li').forEach(function(li, i){
+      const city = (d.cities || [])[i];
+      if (!city) return;
+      li.querySelector('b').textContent     = city.city;
+      li.querySelector('small').textContent = city.note || '';
+      li.querySelector('img').alt           = city.city;
+    });
+  }
+
+  const vk = document.getElementById('revKicker');
+  if (vk) {
+    vk.textContent = d.revKicker;
+    document.getElementById('revTitle').textContent = d.revTitle;
+    document.querySelectorAll('.rev').forEach(function(fig, i){
+      const r = (d.reviews || [])[i];
+      if (!r) return;
+      fig.querySelector('blockquote').textContent = r.text;
+      fig.querySelector('b').textContent          = r.name;
+      fig.querySelector('small').textContent      = r.trip || '';
+    });
+  }
+
+  const outro = document.getElementById('outroText');
+  if (outro) outro.textContent = d.outro;
+
+  const shareSpan = document.querySelector('#shareBtn span');
+  if (shareSpan) shareSpan.textContent = d.share;
+
+  const promoSpan = document.querySelector('#promo span');
+  if (promoSpan) promoSpan.textContent = d.promo;
+
+  const box = document.getElementById('langs');
+  box.setAttribute('aria-label', d.groupLabel);
+  box.querySelectorAll('button').forEach(function(btn){
+    btn.setAttribute('aria-pressed', String(btn.dataset.lang === LANG));
+  });
+}
 
 /**
  * Проявление блоков по мере прокрутки. Если IntersectionObserver недоступен,
@@ -752,20 +960,15 @@ const ICONS = {
   root.setProperty('--muted',     t.muted);
 
   // Контент
-  const img = document.getElementById('photo');
-  img.src = CONFIG.photo.page;
-  img.alt = p.displayName + ' — ' + p.title;
+  document.getElementById('photo').src = CONFIG.photo.page;
 
-  document.getElementById('name').textContent      = p.displayName;
-  document.getElementById('role').textContent      = p.title;
-  document.getElementById('bio').textContent       = p.bio;
-  // Главная кнопка собирается из CONFIG.cta
+  // Главная кнопка собирается из CONFIG.cta (подпись подставит applyTexts)
   const cta = document.getElementById('ctaBtn');
   cta.href = typeof CONFIG.cta.href === 'function' ? CONFIG.cta.href(c) : CONFIG.cta.href;
   cta.innerHTML = (ICONS[CONFIG.cta.id] || '') + '<span></span>';
-  cta.querySelector('span').textContent = CONFIG.cta.label;
   if (/^https?:/i.test(cta.href)) { cta.target = '_blank'; cta.rel = 'noopener noreferrer'; }
 
+  // Название бренда и слоган не переводятся: это фирменные слова
   document.getElementById('brandName').textContent = b.name;
   document.getElementById('tagline').textContent   = b.tagline;
 
@@ -779,9 +982,6 @@ const ICONS = {
   // Маршрут с остановками
   const routes = CONFIG.routes;
   if (routes && routes.items && routes.items.length) {
-    document.getElementById('routesKicker').textContent = routes.kicker;
-    document.getElementById('routesTitle').textContent  = routes.title;
-
     const list = document.getElementById('routeList');
     routes.items.forEach(function(it){
       const li  = document.createElement('li');
@@ -789,17 +989,10 @@ const ICONS = {
       fig.className = 'stop';
       const img = document.createElement('img');
       img.src = it.img;
-      img.alt = it.city;
       img.loading = 'lazy';           // фото ниже первого экрана грузятся по мере прокрутки
       img.decoding = 'async';
-      const name = document.createElement('b');
-      name.textContent = it.city;
-      fig.append(img, name);
-      if (it.note) {
-        const note = document.createElement('small');
-        note.textContent = it.note;
-        fig.appendChild(note);
-      }
+      // подписи городов приходят из словаря языка, здесь только каркас
+      fig.append(img, document.createElement('b'), document.createElement('small'));
       li.appendChild(fig);
       list.appendChild(li);
     });
@@ -810,46 +1003,32 @@ const ICONS = {
   }
 
   // Отзывы
-  const rev = CONFIG.reviews;
-  if (rev && rev.items && rev.items.length) {
-    document.getElementById('revKicker').textContent = rev.kicker;
-    document.getElementById('revTitle').textContent  = rev.title;
-
+  // Каркас отзывов: количество берём из словаря языка
+  const revCount = (dict().reviews || []).length;
+  if (revCount) {
     const box = document.getElementById('revList');
-    rev.items.forEach(function(it){
+    for (let i = 0; i < revCount; i++) {
       const fig = document.createElement('figure');
       fig.className = 'rev';
-      const q = document.createElement('blockquote');
-      q.textContent = it.text;
       const cap = document.createElement('figcaption');
-      const nm = document.createElement('b');
-      nm.textContent = it.name;
-      cap.appendChild(nm);
-      if (it.trip) {
-        const tr = document.createElement('small');
-        tr.textContent = it.trip;
-        cap.appendChild(tr);
-      }
-      fig.append(q, cap);
+      cap.append(document.createElement('b'), document.createElement('small'));
+      fig.append(document.createElement('blockquote'), cap);
       box.appendChild(fig);
-    });
-
+    }
     revealOnScroll(box.querySelectorAll('.rev'));
   } else {
     document.getElementById('reviews').remove();
   }
 
-  if (CONFIG.outro && CONFIG.outro.text) document.getElementById('outroText').textContent = CONFIG.outro.text;
-
   // Кнопка «поделиться»: системное меню телефона, а если его нет — копирование ссылки
   const share = document.getElementById('shareBtn');
   share.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5"/><path d="m8 7 4-4 4 4"/><path d="M5 13v5.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V13"/></svg><span></span>';
-  share.querySelector('span').textContent = CONFIG.ui.shareLabel;
   share.hidden = false;
   share.addEventListener('click', async function(){
+    const d = dict();
     const data = {
-      title: p.displayName + ' — ' + b.name,
-      text:  p.bio,
+      title: d.name + ' — ' + b.name,
+      text:  d.bio,
       url:   location.href.split('?')[0].split('#')[0]
     };
     if (navigator.share) {
@@ -858,7 +1037,7 @@ const ICONS = {
     }
     try {
       await navigator.clipboard.writeText(data.url);
-      toast(CONFIG.ui.shareCopied);
+      toast(d.shareCopied);
     } catch (e) {
       toast(data.url);
     }
@@ -869,10 +1048,8 @@ const ICONS = {
   if (CONFIG.promo && CONFIG.promo.url) {
     promo.href = CONFIG.promo.url;
     promo.innerHTML = '<span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"/></svg>';
-    promo.querySelector('span').textContent = CONFIG.promo.text;
     promo.hidden = false;
   }
-  document.title = p.displayName + ' — ' + b.name;
 
   // Круглые кнопки
   const nav = document.getElementById('links');
@@ -883,14 +1060,27 @@ const ICONS = {
     el.href = href;
     el.innerHTML = ICONS[a.id] || '';
     el.dataset.id = a.id;
-    el.setAttribute('aria-label', a.label);
-    el.title = a.label;
     // внешние ссылки — в новой вкладке; tel:/mailto: — в текущей
     if (/^https?:/i.test(href)) { el.target = '_blank'; el.rel = 'noopener noreferrer'; }
     nav.appendChild(el);
   });
   // Сообщаем CSS фактическое число кнопок — от него считается их размер
   nav.style.setProperty('--n', nav.children.length || 1);
+
+  // Кнопки переключения языка
+  const langBox = document.getElementById('langs');
+  CONFIG.i18n.order.forEach(function(code){
+    const d = CONFIG.i18n.langs[code];
+    if (!d) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.lang = code;
+    btn.textContent = d.label;
+    btn.addEventListener('click', function(){ setLang(code); });
+    langBox.appendChild(btn);
+  });
+
+  applyTexts();
 })();
 
 /* ============================================================================
@@ -1019,7 +1209,7 @@ document.querySelectorAll('.cta, .links a, .share, .promo').forEach(function(el)
       exportVCard();
       return;
     }
-    if (isInAppBrowser()) toast(CONFIG.ui.toastInApp);
+    if (isInAppBrowser()) toast(dict().toastInApp);
   });
 });
 </script>
