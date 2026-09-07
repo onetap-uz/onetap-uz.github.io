@@ -370,6 +370,35 @@ body{
   opacity:.8;
 }
 
+/* ---------- Переключатель языка ---------- */
+.langs{
+  position:absolute; z-index:3;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  right:16px;
+  display:flex; gap:2px;
+  padding:3px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:rgba(255,255,255,.04);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.langs button{
+  border:0; background:none; cursor:pointer;
+  padding:5px 9px;
+  border-radius:100px;
+  color:var(--muted);
+  font-family:'Inter', sans-serif;
+  font-size:10px; font-weight:500;
+  letter-spacing:.09em; text-transform:uppercase;
+  transition:color .2s var(--ease), background .2s var(--ease), transform .15s var(--ease);
+}
+.langs button[aria-pressed="true"]{
+  background:rgba(124,92,255,.22);
+  color:var(--accent-2);
+}
+.langs button:active{ transform:scale(.92); }
+.langs button:focus-visible{ outline:2px solid var(--accent-2); outline-offset:2px; }
+
 /* ---------- Уведомление (тост) ---------- */
 .toast{
   position:fixed; left:50%; translate:-50% 0;
@@ -431,6 +460,9 @@ body{
 <body>
   <main class="card">
     <div class="glow" aria-hidden="true"><i></i></div>
+
+    <!-- Переключатель языка (CONFIG.i18n) -->
+    <div class="langs" id="langs" role="group"></div>
 
     <section class="hero">
       <!-- 1. Фото -->
@@ -494,9 +526,9 @@ const CONFIG = {
     lastName:      'Davlatov',
     phoneticFirst: 'Миран',                 // кириллица внутри контакта
     phoneticLast:  'Давлатов',
-    title:         'NFC Cards & Web Development',
-    company:       '',                      // пусто — строка ORG в контакт не попадёт
-    bio:           'Делаю цифровые визитки и сайты: одно касание — и ваши контакты уже у собеседника.'
+    title:         'NFC Cards & Web Development',  // должность внутри контакта
+    company:       ''                       // пусто — строка ORG в контакт не попадёт
+    // Имя, должность и био НА СТРАНИЦЕ берутся из i18n — их правьте там
   },
 
   /* --- Бренд --- */
@@ -538,26 +570,66 @@ const CONFIG = {
          Telegram не поддерживает предзаполненный текст в личных чатах
          (параметр ?text= работает только у ботов), поэтому чат открывается пустым. --- */
   cta: {
-    id:    'telegram',                      // иконка берётся из ICONS по этому id
-    label: 'Заказать визитку',
-    note:  'Отвечаю в течение часа',        // микроподпись под кнопкой
-    href:  c => c.telegram
+    id:   'telegram',                       // иконка берётся из ICONS по этому id
+    href: c => c.telegram                   // подпись и микроподпись — в словарях i18n
   },
 
-  /* --- Преимущества одной строкой под био. Пустой массив — блок не рисуется. --- */
-  features: [
-    'Все контакты в одном касании',
-    'Меняете данные — карта та же',
-    'Готово за 1 день'
-  ],
-
-  /* --- Тексты интерфейса --- */
+  /* --- Служебное. Все видимые тексты живут в i18n ниже. --- */
   ui: {
-    // Подсказки показываются ТОЛЬКО когда кнопка реально не может сработать.
-    // При нормальном нажатии никаких надписей нет: телефон сам открывает карточку контакта.
-    toastInApp:  'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
-    toastFail:   'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.',
-    vcfFileName: 'Miran_Davlatov'           // имя файла без расширения
+    vcfFileName: 'Miran_Davlatov'           // имя файла контакта без расширения
+  },
+
+  /* ==========================================================================
+     ЯЗЫКИ. Всё, что человек читает на странице, живёт здесь.
+     Файл контакта (.vcf) намеренно НЕ переводится: он один на все языки.
+     ========================================================================== */
+  i18n: {
+    fallback: 'ru',
+    order: ['ru', 'uz', 'en'],
+    langs: {
+
+      ru: {
+        label:'RU', groupLabel:'Язык',
+        name:'Miran Davlatov',
+        role:'NFC-визитки и сайты',
+        bio:'Делаю цифровые визитки и сайты: одно касание — и ваши контакты уже у собеседника.',
+        features:['Все контакты в одном касании','Меняете данные — карта та же','Готово за 1 день'],
+        ctaLabel:'Заказать визитку',
+        ctaNote:'Отвечаю в течение часа',
+        whatsappText:'Здравствуйте! Хочу такую же цифровую визитку.',
+        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email' },
+        toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
+        toastFail:'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.'
+      },
+
+      uz: {
+        label:'UZ', groupLabel:'Til',
+        name:'Miran Davlatov',
+        role:'NFC vizitkalar va saytlar',
+        bio:'Raqamli vizitka va saytlar yarataman: bir tegish — va kontaktlaringiz suhbatdoshda.',
+        features:['Barcha kontaktlar bir tegishda','Maʼlumot oʻzgaradi — karta oʻsha','Bir kunda tayyor'],
+        ctaLabel:'Vizitka buyurtma qilish',
+        ctaNote:'Bir soat ichida javob beraman',
+        whatsappText:'Assalomu alaykum! Menga ham shunday raqamli vizitka kerak.',
+        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email' },
+        toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
+        toastFail:'Kontaktni ochib boʻlmadi. Sahifani Safari yoki Chromeda oching va qayta urinib koʻring.'
+      },
+
+      en: {
+        label:'EN', groupLabel:'Language',
+        name:'Miran Davlatov',
+        role:'NFC Cards & Web Development',
+        bio:'I build digital business cards and websites: one tap and your contacts are already saved.',
+        features:['All contacts in one tap','Data changes — the card stays','Ready in one day'],
+        ctaLabel:'Order a card',
+        ctaNote:'I reply within an hour',
+        whatsappText:'Hello! I would like a digital business card like this one.',
+        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email' },
+        toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
+        toastFail:'Could not open the contact. Open the page in Safari or Chrome and try again.'
+      }
+    }
   },
 
   /* --- Фото: page — аватар на странице, vcard — облегчённая копия для контакта --- */
@@ -577,6 +649,78 @@ const CONFIG = {
     { id:'map',         label:'Адрес',             href: c => c.maps }
   ]
 };
+
+/* ============================================================================
+   ЯЗЫК СТРАНИЦЫ
+   Выбор запоминается в браузере посетителя. При первом заходе берём язык
+   телефона, а если он не из наших — язык по умолчанию.
+   ========================================================================== */
+const LANG_KEY = 'ot-lang';
+let LANG = (function pickLang(){
+  const langs = CONFIG.i18n.langs;
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && langs[saved]) return saved;
+  } catch (e) { /* приватный режим — просто идём дальше */ }
+  const nav = (navigator.language || '').slice(0, 2).toLowerCase();
+  if (langs[nav]) return nav;
+  return CONFIG.i18n.fallback;
+})();
+
+/** Словарь текущего языка. */
+function dict(){
+  return CONFIG.i18n.langs[LANG] || CONFIG.i18n.langs[CONFIG.i18n.fallback];
+}
+
+/** Смена языка: без перезагрузки, страница просто переписывает свои тексты. */
+function setLang(code){
+  if (!CONFIG.i18n.langs[code] || code === LANG) return;
+  LANG = code;
+  try { localStorage.setItem(LANG_KEY, code); } catch (e) { /* не смогли запомнить — не беда */ }
+  applyTexts();
+}
+
+/** Подставляет все тексты выбранного языка в уже построенную страницу. */
+function applyTexts(){
+  const d = dict(), b = CONFIG.brand, c = CONFIG.contacts;
+
+  document.documentElement.lang = LANG;
+  document.title = d.name + ' — ' + b.name;
+
+  const photo = document.getElementById('photo');
+  if (photo) photo.alt = d.name + ' — ' + d.role;
+
+  document.getElementById('name').textContent = d.name;
+  document.getElementById('role').textContent = d.role;
+  document.getElementById('bio').textContent  = d.bio;
+
+  document.querySelectorAll('.cta span').forEach(function(el){ el.textContent = d.ctaLabel; });
+
+  const note = document.getElementById('ctaNote');
+  if (note) {
+    if (d.ctaNote) { note.textContent = d.ctaNote; note.hidden = false; }
+    else note.hidden = true;
+  }
+
+  document.querySelectorAll('#features span').forEach(function(el, i){
+    el.textContent = (d.features || [])[i] || '';
+  });
+
+  // Подписи круглых кнопок + текст, с которым открывается WhatsApp
+  document.querySelectorAll('.links a').forEach(function(a){
+    const label = d.actions && d.actions[a.dataset.id];
+    if (label) { a.setAttribute('aria-label', label); a.title = label; }
+    if (a.dataset.id === 'whatsapp' && c.whatsapp) {
+      a.href = c.whatsapp + (d.whatsappText ? '?text=' + encodeURIComponent(d.whatsappText) : '');
+    }
+  });
+
+  const box = document.getElementById('langs');
+  box.setAttribute('aria-label', d.groupLabel);
+  box.querySelectorAll('button').forEach(function(btn){
+    btn.setAttribute('aria-pressed', String(btn.dataset.lang === LANG));
+  });
+}
 
 /* --- Иконки 24x24: тонкие штриховые + фирменные глифы соцсетей --- */
 const ICONS = {
@@ -607,38 +751,26 @@ const ICONS = {
   root.setProperty('--muted',     t.muted);
 
   // Контент
-  const img = document.getElementById('photo');
-  img.src = CONFIG.photo.page;
-  img.alt = p.displayName + ' — ' + p.title;
+  document.getElementById('photo').src = CONFIG.photo.page;
 
-  document.getElementById('name').textContent      = p.displayName;
-  document.getElementById('role').textContent      = p.title;
-  document.getElementById('bio').textContent       = p.bio;
-  // Главная кнопка собирается из CONFIG.cta
+  // Главная кнопка собирается из CONFIG.cta (подпись подставит applyTexts)
   const cta = document.getElementById('ctaBtn');
   cta.href = typeof CONFIG.cta.href === 'function' ? CONFIG.cta.href(c) : CONFIG.cta.href;
   cta.innerHTML = (ICONS[CONFIG.cta.id] || '') + '<span></span>';
-  cta.querySelector('span').textContent = CONFIG.cta.label;
   if (/^https?:/i.test(cta.href)) { cta.target = '_blank'; cta.rel = 'noopener noreferrer'; }
 
-  // Микроподпись под кнопкой и строка преимуществ — оба блока необязательные
-  const note = document.getElementById('ctaNote');
-  if (CONFIG.cta.note) note.textContent = CONFIG.cta.note; else note.remove();
-
+  // Каркас строки преимуществ: сколько пунктов в словаре — столько и элементов
   const feat = document.getElementById('features');
-  if (CONFIG.features && CONFIG.features.length) {
-    CONFIG.features.forEach(function(s){
-      const el = document.createElement('span');
-      el.textContent = s;                 // разделитель рисует CSS, не разметка
-      feat.appendChild(el);
-    });
+  const featCount = (dict().features || []).length;
+  if (featCount) {
+    for (let i = 0; i < featCount; i++) feat.appendChild(document.createElement('span'));
   } else {
     feat.remove();
   }
 
+  // Название бренда и слоган не переводятся: это фирменные слова
   document.getElementById('brandName').textContent = b.name;
   document.getElementById('tagline').textContent   = b.tagline;
-  document.title = p.displayName + ' — ' + b.name;
 
   // Круглые кнопки
   const nav = document.getElementById('links');
@@ -649,14 +781,27 @@ const ICONS = {
     el.href = href;
     el.innerHTML = ICONS[a.id] || '';
     el.dataset.id = a.id;
-    el.setAttribute('aria-label', a.label);
-    el.title = a.label;
     // внешние ссылки — в новой вкладке; tel:/mailto: — в текущей
     if (/^https?:/i.test(href)) { el.target = '_blank'; el.rel = 'noopener noreferrer'; }
     nav.appendChild(el);
   });
   // Сообщаем CSS фактическое число кнопок — от него считается их размер
   nav.style.setProperty('--n', nav.children.length || 1);
+
+  // Кнопки переключения языка
+  const langBox = document.getElementById('langs');
+  CONFIG.i18n.order.forEach(function(code){
+    const d = CONFIG.i18n.langs[code];
+    if (!d) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.lang = code;
+    btn.textContent = d.label;
+    btn.addEventListener('click', function(){ setLang(code); });
+    langBox.appendChild(btn);
+  });
+
+  applyTexts();
 })();
 
 /* ============================================================================
@@ -789,7 +934,7 @@ document.querySelectorAll('.cta, .links a').forEach(function(el){
       exportVCard();
       return;
     }
-    if (isInAppBrowser()) toast(CONFIG.ui.toastInApp);
+    if (isInAppBrowser()) toast(dict().toastInApp);
   });
 });
 </script>
