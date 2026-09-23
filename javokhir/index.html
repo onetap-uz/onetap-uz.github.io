@@ -626,7 +626,7 @@ const CONFIG = {
   /* --- Бренд --- */
   brand: {
     name:    'Porto Bello Hotel',
-    tagline: 'Explore more. Remember forever.'
+    tagline: ''                          // слогана нет — строка не рисуется
   },
 
   /* --- Контактные данные (используются и на странице, и в vCard) --- */
@@ -835,7 +835,8 @@ const ICONS = {
 
   // Название бренда и слоган не переводятся: это фирменные слова
   document.getElementById('brandName').textContent = b.name;
-  document.getElementById('tagline').textContent   = b.tagline;
+  if (b.tagline) document.getElementById('tagline').textContent = b.tagline;
+  else document.getElementById('tagline').remove();
   // Круглые кнопки
   const nav = document.getElementById('links');
   CONFIG.actions.forEach(function(a){
@@ -930,7 +931,7 @@ function buildVCard(){
   if (c.instagram) L.push('X-SOCIALPROFILE;TYPE=instagram:' + c.instagram);
 
   L.push('ADR;TYPE=WORK:;;' + esc(ad.street) + ';' + esc(ad.city) + ';' + esc(ad.region) + ';' + esc(ad.zip) + ';' + esc(ad.country));
-  L.push('NOTE:' + esc(b.tagline));
+  if (b.tagline) L.push('NOTE:' + esc(b.tagline));
 
   // Фото контакта (base64) — самая длинная строка, сворачивается функцией fold()
   if (CONFIG.photo.vcard) L.push('PHOTO;ENCODING=b;TYPE=JPEG:' + CONFIG.photo.vcard);
