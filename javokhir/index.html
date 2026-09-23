@@ -539,28 +539,8 @@ body{
       <div class="mark" aria-hidden="true"></div>
       <div class="logo" id="brandName"></div>
       <p class="tagline" id="tagline"></p>
-      <a class="scroll-hint" href="#routes" aria-label="Смотреть направления">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-      </a>
     </footer>
   </main>
-
-  <!-- Вторая секция: маршрут с остановками (CONFIG.routes) -->
-  <section class="routes" id="routes">
-    <header class="sec-head">
-      <span class="sec-kicker" id="routesKicker"></span>
-      <h2 class="sec-title" id="routesTitle"></h2>
-    </header>
-    <ol class="route" id="routeList"></ol>
-  </section>
-
-  <!-- Закрывающий блок: последнее слово и кнопка -->
-  <section class="outro">
-    <p class="outro-text" id="outroText"></p>
-    <a class="cta" id="ctaBtn2" href="#"></a>
-    <button class="share" id="shareBtn" type="button" hidden></button>
-    <a class="promo" id="promo" hidden target="_blank" rel="noopener noreferrer"></a>
-  </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -589,22 +569,7 @@ const CONFIG = {
         bio:'Ваш первый контакт в отеле: бронирование, заселение и любой вопрос во время проживания.',
         ctaLabel:'Написать в WhatsApp',
         whatsappText:'Здравствуйте! Я по визитке Porto Bello — хочу уточнить по размещению.',
-        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт', map:'Адрес' },
-        scrollAria:'Смотреть направления',
-        routesKicker:'Направления', routesTitle:'Куда мы отправляем',
-        cities:[
-          { city:'Мальдивы',  note:'Индийский океан' },
-          { city:'Турция',    note:'Стамбул и побережье' },
-          { city:'ОАЭ',       note:'Дубай' },
-          { city:'Индонезия', note:'Бали' },
-          { city:'Египет',    note:'Красное море' },
-          { city:'Вьетнам',   note:'Халонг' }
-        ],
-        finale:'По всему миру',
-        outro:'Расскажите, куда хотите поехать — соберу маршрут под вас.',
-        share:'Поделиться визиткой',
-        shareCopied:'Ссылка скопирована — отправьте её кому нужно.',
-        promo:'Хотите такую же визитку?',
+        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт', map:'Адрес' }, routesTitle:'Куда мы отправляем',
         toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
         toastFail:'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.'
       },
@@ -616,22 +581,7 @@ const CONFIG = {
         bio:'Mehmonxonadagi birinchi aloqangiz: bron, joylashtirish va yashash davridagi har qanday savol.',
         ctaLabel:'WhatsAppda yozish',
         whatsappText:'Assalomu alaykum! Porto Bello vizitkasi orqali yozyapman — joylashuv boʻyicha savolim bor.',
-        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt', map:'Manzil' },
-        scrollAria:'Yoʻnalishlarni koʻrish',
-        routesKicker:'Yoʻnalishlar', routesTitle:'Sizni qayerlarga yuboramiz',
-        cities:[
-          { city:'Maldiv orollari', note:'Hind okeani' },
-          { city:'Turkiya',         note:'Istanbul va sohil' },
-          { city:'BAA',             note:'Dubay' },
-          { city:'Indoneziya',      note:'Bali' },
-          { city:'Misr',            note:'Qizil dengiz' },
-          { city:'Vetnam',          note:'Halong' }
-        ],
-        finale:'Butun dunyo boʻylab',
-        outro:'Qayerga bormoqchi ekaningizni ayting — marshrutni siz uchun tuzaman.',
-        share:'Vizitkani ulashish',
-        shareCopied:'Havola nusxalandi — kerakli odamga yuboring.',
-        promo:'Shunday vizitka xohlaysizmi?',
+        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt', map:'Manzil' }, routesTitle:'Sizni qayerlarga yuboramiz',
         toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
         toastFail:'Kontaktni ochib boʻlmadi. Sahifani Safari yoki Chromeda oching va qayta urinib koʻring.'
       },
@@ -643,22 +593,7 @@ const CONFIG = {
         bio:'Your first contact at the hotel: booking, check-in and anything you need during your stay.',
         ctaLabel:'Message on WhatsApp',
         whatsappText:'Hello! I found your Porto Bello card — I have a question about my stay.',
-        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website', map:'Address' },
-        scrollAria:'See destinations',
-        routesKicker:'Destinations', routesTitle:'Where we send you',
-        cities:[
-          { city:'Maldives',  note:'Indian Ocean' },
-          { city:'Türkiye',   note:'Istanbul and the coast' },
-          { city:'UAE',       note:'Dubai' },
-          { city:'Indonesia', note:'Bali' },
-          { city:'Egypt',     note:'Red Sea' },
-          { city:'Vietnam',   note:'Ha Long' }
-        ],
-        finale:'All over the world',
-        outro:'Tell me where you want to go — I will build the route for you.',
-        share:'Share this card',
-        shareCopied:'Link copied — send it to anyone.',
-        promo:'Want a card like this?',
+        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website', map:'Address' }, routesTitle:'Where we send you',
         toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
         toastFail:'Could not open the contact. Open the page in Safari or Chrome and try again.'
       }
@@ -728,29 +663,6 @@ const CONFIG = {
   cta: {
     id:   'whatsapp',                       // иконка берётся из ICONS по этому id
     href: c => c.whatsapp + (c.whatsappText ? '?text=' + encodeURIComponent(c.whatsappText) : '')
-  },
-
-  /* --- Вторая секция: маршрут. Здесь только файлы фотографий,
-         названия городов лежат в словарях языков (cities).
-         Пустой items — секции на странице нет. --- */
-  routes: {
-    items: [
-      { img:'img/maldives.jpg' },
-      { img:'img/istanbul.jpg' },
-      { img:'img/dubai.jpg' },
-      { img:'img/indonesia.jpg' },
-      { img:'img/egypt.jpg' },
-      { img:'img/vietnam.jpg' }
-    ],
-    // Финальная широкая карточка в конце маршрута. Подпись — в словарях (finale)
-    finale: 'img/world.jpg'
-  },
-
-  /* --- Скромная подпись-ссылка в самом низу: «хотите такую же визитку».
-         Не спорит с главной кнопкой, но даёт переход к автору.
-         Убрать у клиента, который этого не хочет: поставить url пустым. --- */
-  promo: {
-    url:  'https://onetap-uz.github.io/'
   },
 
   /* --- Служебное. Все видимые тексты живут в i18n выше. --- */
@@ -924,83 +836,6 @@ const ICONS = {
   // Название бренда и слоган не переводятся: это фирменные слова
   document.getElementById('brandName').textContent = b.name;
   document.getElementById('tagline').textContent   = b.tagline;
-
-  // Та же кнопка внизу страницы: прокрутив маршрут, человек не должен
-  // возвращаться наверх, чтобы написать
-  const cta2 = document.getElementById('ctaBtn2');
-  cta2.href = cta.href;
-  cta2.innerHTML = cta.innerHTML;
-  if (cta.target) { cta2.target = cta.target; cta2.rel = cta.rel; }
-
-  // Маршрут с остановками
-  const routes = CONFIG.routes;
-  if (routes && routes.items && routes.items.length) {
-    const list = document.getElementById('routeList');
-    routes.items.forEach(function(it){
-      const li  = document.createElement('li');
-      const fig = document.createElement('figure');
-      fig.className = 'stop';
-      const img = document.createElement('img');
-      img.src = it.img;
-      img.loading = 'lazy';           // фото ниже первого экрана грузятся по мере прокрутки
-      img.decoding = 'async';
-      // подписи городов приходят из словаря языка, здесь только каркас
-      fig.append(img, document.createElement('b'), document.createElement('small'));
-      li.appendChild(fig);
-      list.appendChild(li);
-    });
-
-    // Финальная широкая карточка «по всему миру» — последняя точка маршрута
-    if (routes.finale) {
-      const li  = document.createElement('li');
-      li.className = 'finale';
-      const fig = document.createElement('figure');
-      fig.className = 'stop';
-      const img = document.createElement('img');
-      img.src = routes.finale;
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      fig.append(img, document.createElement('b'));
-      li.appendChild(fig);
-      list.appendChild(li);
-    }
-
-    revealOnScroll(list.querySelectorAll('li'));
-  } else {
-    document.getElementById('routes').remove();
-  }
-
-  // Кнопка «поделиться»: системное меню телефона, а если его нет — копирование ссылки
-  const share = document.getElementById('shareBtn');
-  share.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5"/><path d="m8 7 4-4 4 4"/><path d="M5 13v5.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V13"/></svg><span></span>';
-  share.hidden = false;
-  share.addEventListener('click', async function(){
-    const d = dict();
-    const data = {
-      title: d.name + ' — ' + b.name,
-      text:  d.bio,
-      url:   location.href.split('?')[0].split('#')[0]
-    };
-    if (navigator.share) {
-      try { await navigator.share(data); } catch (e) { /* человек закрыл меню — это не ошибка */ }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(data.url);
-      toast(d.shareCopied);
-    } catch (e) {
-      toast(data.url);
-    }
-  });
-
-  // Подпись-ссылка внизу. Нет url в конфиге — элемента на странице нет
-  const promo = document.getElementById('promo');
-  if (CONFIG.promo && CONFIG.promo.url) {
-    promo.href = CONFIG.promo.url;
-    promo.innerHTML = '<span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"/></svg>';
-    promo.hidden = false;
-  }
-
   // Круглые кнопки
   const nav = document.getElementById('links');
   CONFIG.actions.forEach(function(a){
