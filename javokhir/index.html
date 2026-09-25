@@ -634,7 +634,7 @@ const CONFIG = {
     phone:       '+998993588088',           // E.164 — для tel: и vCard
     phonePretty: '+998 99 358 80 88',
     email:       'javokhir8088@gmail.com',
-    website:     'https://portobellotour.uz',
+    website:     '',                        // сайта нет — иконки и строки в контакте не будет
     telegram:    '',                        // личного телеграма нет — кнопки не будет
     whatsapp:    'https://wa.me/998993588088',
     // Текст, который окажется уже набранным в чате. Человеку остаётся нажать
@@ -912,7 +912,7 @@ function buildVCard(){
   L.push('TITLE:' + esc(p.title));
   L.push('TEL;TYPE=CELL,VOICE:' + c.phone);
   L.push('EMAIL;TYPE=INTERNET:' + c.email);
-  L.push('URL:' + c.website);                 // сайт — основной URL
+  if (c.website) L.push('URL:' + c.website);                 // сайт — основной URL
 
   // Соцсети: группы item + X-ABLabel, чтобы в телефоне подписи читались словами,
   // а не одинаковым «URL». iOS показывает метку, Android её игнорирует, но ссылку сохраняет.
