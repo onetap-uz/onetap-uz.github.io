@@ -8,12 +8,14 @@ ORG:Porto Bello Hotel
 TITLE:Front Office & Sales Manager
 TEL;TYPE=CELL,VOICE:+998993588088
 EMAIL;TYPE=INTERNET:javokhir8088@gmail.com
-item1.URL:https://wa.me/998993588088
-item1.X-ABLabel:WhatsApp
-item2.URL:https://instagram.com/_john_8088
-item2.X-ABLabel:Instagram
-item3.URL:https://maps.app.goo.gl/o7FmVwJsch6SC1XX9
-item3.X-ABLabel:Google Maps
+item1.URL:https://t.me/imjohhnn
+item1.X-ABLabel:Telegram
+item2.URL:https://wa.me/998993588088
+item2.X-ABLabel:WhatsApp
+item3.URL:https://instagram.com/_john_8088
+item3.X-ABLabel:Instagram
+item4.URL:https://maps.app.goo.gl/o7FmVwJsch6SC1XX9
+item4.X-ABLabel:Google Maps
 X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/_john_8088
 ADR;TYPE=WORK:;;Botkin Street 119;Tashkent;;;Uzbekistan
 PHOTO;ENCODING=b;TYPE=JPEG:/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJ

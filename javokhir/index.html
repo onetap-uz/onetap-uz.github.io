@@ -567,7 +567,7 @@ const CONFIG = {
         name:'Ergashev Javokhir',
         role:'Front Office & Sales Manager',
         bio:'Ваш первый контакт в отеле: бронирование, заселение и любой вопрос во время проживания.',
-        ctaLabel:'Написать в WhatsApp',
+        ctaLabel:'Написать в Telegram',
         whatsappText:'Здравствуйте! Я по визитке Porto Bello — хочу уточнить по размещению.',
         actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт', map:'Адрес' }, routesTitle:'Куда мы отправляем',
         toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
@@ -579,7 +579,7 @@ const CONFIG = {
         name:'Ergashev Javokhir',
         role:'Front Office & Sales Manager',
         bio:'Mehmonxonadagi birinchi aloqangiz: bron, joylashtirish va yashash davridagi har qanday savol.',
-        ctaLabel:'WhatsAppda yozish',
+        ctaLabel:'Telegramda yozish',
         whatsappText:'Assalomu alaykum! Porto Bello vizitkasi orqali yozyapman — joylashuv boʻyicha savolim bor.',
         actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt', map:'Manzil' }, routesTitle:'Sizni qayerlarga yuboramiz',
         toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
@@ -591,7 +591,7 @@ const CONFIG = {
         name:'Ergashev Javokhir',
         role:'Front Office & Sales Manager',
         bio:'Your first contact at the hotel: booking, check-in and anything you need during your stay.',
-        ctaLabel:'Message on WhatsApp',
+        ctaLabel:'Message on Telegram',
         whatsappText:'Hello! I found your Porto Bello card — I have a question about my stay.',
         actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website', map:'Address' }, routesTitle:'Where we send you',
         toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
@@ -635,7 +635,7 @@ const CONFIG = {
     phonePretty: '+998 99 358 80 88',
     email:       'javokhir8088@gmail.com',
     website:     '',                        // сайта нет — иконки и строки в контакте не будет
-    telegram:    '',                        // личного телеграма нет — кнопки не будет
+    telegram:    'https://t.me/imjohhnn',
     whatsapp:    'https://wa.me/998993588088',
     // Текст, который окажется уже набранным в чате. Человеку остаётся нажать
     // «отправить» — и его номер попадает к Нозиме. Это ценнее сохранённого контакта.
@@ -661,8 +661,8 @@ const CONFIG = {
          Telegram не поддерживает предзаполненный текст в личных чатах
          (параметр ?text= работает только у ботов), поэтому чат открывается пустым. --- */
   cta: {
-    id:   'whatsapp',                       // иконка берётся из ICONS по этому id
-    href: c => c.whatsapp + (c.whatsappText ? '?text=' + encodeURIComponent(c.whatsappText) : '')
+    id:   'telegram',                       // иконка берётся из ICONS по этому id
+    href: c => c.telegram                   // подпись — в словарях i18n
   },
 
   /* --- Служебное. Все видимые тексты живут в i18n выше. --- */
@@ -680,6 +680,7 @@ const CONFIG = {
   actions: [
     { id:'savecontact', label:'Сохранить контакт', href: c => c.vcfUrl },
     { id:'phone',       label:'Позвонить',         href: c => 'tel:' + c.phone },
+    { id:'whatsapp',    label:'WhatsApp',          href: c => c.whatsapp + (c.whatsappText ? '?text=' + encodeURIComponent(c.whatsappText) : '') },
     { id:'instagram',   label:'Instagram',         href: c => c.instagram },
     { id:'email',       label:'Email',             href: c => 'mailto:' + c.email },
     { id:'website',     label:'Сайт',              href: c => c.website },
