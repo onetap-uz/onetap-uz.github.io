@@ -23,18 +23,29 @@
    Все данные и цвета настраиваются в объекте CONFIG (ниже, в <script>).
    ============================================================ */
 
-/* --- Дизайн-токены. Цвета перезаписываются из CONFIG.theme при загрузке --- */
+/* --- Дизайн-токены. Цвета перезаписываются из темы, выбранной посетителем
+       (CONFIG.themes), при загрузке и при каждой смене цвета --- */
 :root{
   --bg:            #07070C;   /* почти чёрный с синим подтоном */
   --bg-2:          #0E0E1A;
+  --bg-3:          #050509;   /* нижняя точка градиента */
   --accent:        #7C5CFF;   /* фиолетовый — основной акцент */
+  --accent-rgb:    124,92,255;   /* он же — для полупрозрачных оттенков */
   --accent-2:      #22D3EE;   /* циан */
   --accent-3:      #FF3D9A;   /* маджента */
+  --cta-1:         #5B2BFF;   /* тёмные стопы главной кнопки */
+  --cta-2:         #8B2FE8;
+  --cta-3:         #C31D7A;
+  --icon:          #22D3EE;   /* иконки в круглых кнопках */
   --text:          #F2F2F7;
   --muted:         #9797B0;
-  --line:          rgba(124,92,255,.32);   /* тонкие линии */
+  --line:          rgba(var(--accent-rgb),.32);   /* тонкие линии */
   --surface:       rgba(255,255,255,.04);  /* фон круглых кнопок */
-  --surface-line:  rgba(124,92,255,.26);
+  --surface-line:  rgba(var(--accent-rgb),.26);
+  --pill:          rgba(255,255,255,.04);  /* фон переключателей языка и цвета */
+  --toast-bg:      rgba(20,20,22,.94);
+  --photo-bg:      #12121c;
+  --blob:          1;                      /* яркость пятен фона (светлой теме — меньше) */
 
   /* Фирменный градиент: им залиты кнопка, кольцо фото и акцентный текст */
   --grad: linear-gradient(100deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent-3) 100%);
@@ -48,7 +59,7 @@ html,body{ height:100%; }
 
 body{
   margin:0;
-  background:linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 55%, #050509 100%);
+  background:linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 55%, var(--bg-3) 100%);
   background-attachment:fixed;
   color:var(--text);
   font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -92,19 +103,19 @@ body{
 .glow::before{
   top:-12%; left:-20%; width:min(80vw, 430px);
   background:radial-gradient(circle, var(--accent) 0%, transparent 68%);
-  filter:blur(60px); opacity:.55;
+  filter:blur(60px); opacity:calc(.55 * var(--blob));
   animation:drift1 19s ease-in-out infinite alternate;
 }
 .glow::after{
   top:6%; right:-24%; width:min(76vw, 400px);
   background:radial-gradient(circle, var(--accent-2) 0%, transparent 68%);
-  filter:blur(64px); opacity:.4;
+  filter:blur(64px); opacity:calc(.4 * var(--blob));
   animation:drift2 23s ease-in-out infinite alternate;
 }
 .glow i{
   bottom:-18%; left:18%; width:min(72vw, 380px);
   background:radial-gradient(circle, var(--accent-3) 0%, transparent 68%);
-  filter:blur(70px); opacity:.34;
+  filter:blur(70px); opacity:calc(.34 * var(--blob));
   animation:drift3 27s ease-in-out infinite alternate;
 }
 @keyframes drift1{ from{ transform:translate3d(0,0,0) scale(1);   } to{ transform:translate3d(16%,12%,0) scale(1.18); } }
@@ -139,7 +150,7 @@ body{
   width:100%; height:100%;
   border-radius:50%;
   padding:2.5px;
-  box-shadow:0 18px 48px rgba(0,0,0,.6), 0 0 30px rgba(124,92,255,.35);
+  box-shadow:0 18px 48px rgba(0,0,0,.6), 0 0 30px rgba(var(--accent-rgb),.35);
 }
 .avatar__ring::before{
   content:''; position:absolute; inset:0;
@@ -153,7 +164,7 @@ body{
   display:block; width:100%; height:100%;
   border-radius:50%;
   object-fit:cover;
-  background:#12121c;
+  background:var(--photo-bg);
 }
 
 /* ---------- 2. Имя ---------- */
@@ -244,7 +255,7 @@ body{
   border:0; border-radius:100px;
   /* Стопы намеренно тёмные: белый текст на них читается уверенно,
      а неон вынесен в свечение вокруг кнопки. */
-  background:linear-gradient(100deg, #5B2BFF 0%, #8B2FE8 52%, #C31D7A 100%);
+  background:linear-gradient(100deg, var(--cta-1) 0%, var(--cta-2) 52%, var(--cta-3) 100%);
   color:#fff;
   text-decoration:none;              /* кнопка — это ссылка <a> */
   font-family:'Inter', sans-serif;
@@ -260,8 +271,8 @@ body{
 
 /* Пульсирующее кольцо: взгляд возвращается к кнопке сам */
 @keyframes ctaPulse{
-  0%,100%{ box-shadow:0 14px 34px rgba(124,92,255,.38), 0 0 0 0 rgba(124,92,255,.42); }
-  60%    { box-shadow:0 18px 46px rgba(124,92,255,.55), 0 0 0 12px rgba(124,92,255,0); }
+  0%,100%{ box-shadow:0 14px 34px rgba(var(--accent-rgb),.38), 0 0 0 0 rgba(var(--accent-rgb),.42); }
+  60%    { box-shadow:0 18px 46px rgba(var(--accent-rgb),.55), 0 0 0 12px rgba(var(--accent-rgb),0); }
 }
 /* Блик, пробегающий по кнопке раз в несколько секунд */
 .cta::after{
@@ -321,7 +332,7 @@ body{
   border-radius:50%;
   border:1px solid var(--surface-line);
   background:var(--surface);
-  color:var(--accent-2);
+  color:var(--icon);
   text-decoration:none;
   -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
   transition:transform .18s var(--ease), border-color .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
@@ -329,14 +340,14 @@ body{
 .links a svg{ width:clamp(17px, 4.6vw, 20px); height:auto; }
 .links a:active{
   transform:scale(.9);
-  background:rgba(124,92,255,.14);
+  background:rgba(var(--accent-rgb),.14);
   border-color:var(--accent);
   color:#fff;
 }
 .links a:focus-visible{ outline:2px solid var(--accent-2); outline-offset:3px; }
 @media (hover:hover){
-  .links a:hover{ border-color:var(--accent); background:rgba(124,92,255,.10); }
-  .cta:hover{ box-shadow:0 16px 36px rgba(124,92,255,.3); }
+  .links a:hover{ border-color:var(--accent); background:rgba(var(--accent-rgb),.10); }
+  .cta:hover{ box-shadow:0 16px 36px rgba(var(--accent-rgb),.3); }
 }
 
 /* ---------- 8. Подвал: логотип и слоган ---------- */
@@ -379,7 +390,7 @@ body{
   padding:3px;
   border:1px solid var(--surface-line);
   border-radius:100px;
-  background:rgba(255,255,255,.04);
+  background:var(--pill);
   -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
 }
 .langs button{
@@ -393,11 +404,48 @@ body{
   transition:color .2s var(--ease), background .2s var(--ease), transform .15s var(--ease);
 }
 .langs button[aria-pressed="true"]{
-  background:rgba(124,92,255,.22);
+  background:rgba(var(--accent-rgb),.22);
   color:var(--accent-2);
 }
 .langs button:active{ transform:scale(.92); }
 .langs button:focus-visible{ outline:2px solid var(--accent-2); outline-offset:2px; }
+
+/* ---------- Переключатель цвета (CONFIG.themes) ----------
+   Зеркально языкам — слева сверху. Кружок = три цвета темы, выбранный обведён. */
+.themes{
+  position:absolute; z-index:3;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  left:16px;
+  display:flex; gap:1px;
+  padding:3px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:var(--pill);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.themes button{
+  display:grid; place-items:center;
+  width:24px; height:24px;
+  padding:0; border:0; border-radius:50%;
+  background:none; cursor:pointer;
+}
+.themes button i{
+  width:13px; height:13px;
+  border-radius:50%;
+  background:var(--sw);
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.35);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.themes button[aria-pressed="true"] i{
+  transform:scale(1.08);
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.35), 0 0 0 2px var(--bg), 0 0 0 3.2px var(--accent);
+}
+.themes button:active i{ transform:scale(.8); }
+.themes button:focus-visible{ outline:2px solid var(--accent-2); outline-offset:1px; }
+
+/* Смена цвета: новая тема растекается кругом от нажатого кружка
+   (View Transitions; где их нет — цвет меняется мгновенно) */
+::view-transition-old(root), ::view-transition-new(root){ animation:none; mix-blend-mode:normal; }
 
 /* ---------- Уведомление (тост) ---------- */
 .toast{
@@ -408,7 +456,7 @@ body{
   padding:11px 18px;
   border-radius:100px;
   border:1px solid var(--surface-line);
-  background:rgba(20,20,22,.94);
+  background:var(--toast-bg);
   -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
   box-shadow:0 12px 34px rgba(0,0,0,.5);
   color:var(--text);
@@ -442,7 +490,7 @@ body{
   .avatar__ring::before, .role, .cta, .cta::after, .cta-note::before{
     animation:none !important;
   }
-  .cta{ box-shadow:0 14px 34px rgba(124,92,255,.38); }
+  .cta{ box-shadow:0 14px 34px rgba(var(--accent-rgb),.38); }
   .cta::after{ display:none; }
   *{ transition-duration:.01ms !important; }
 }
@@ -460,6 +508,9 @@ body{
 <body>
   <main class="card">
     <div class="glow" aria-hidden="true"><i></i></div>
+
+    <!-- Переключатель цвета (CONFIG.themes) -->
+    <div class="themes" id="themes" role="group"></div>
 
     <!-- Переключатель языка (CONFIG.i18n) -->
     <div class="langs" id="langs" role="group"></div>
@@ -508,16 +559,21 @@ body{
 const CONFIG = {
 
   /* --- Цвета. Это продающая страница, а не визитка клиента: палитра
-         намеренно другая — холодный неон вместо сдержанного золота. --- */
-  theme: {
-    bg:      '#07070C',   // почти чёрный с синим подтоном
-    bg2:     '#0E0E1A',
-    accent:  '#7C5CFF',   // фиолетовый — основной
-    accent2: '#22D3EE',   // циан — вторая точка градиента
-    accent3: '#FF3D9A',   // маджента — третья, для живого перелива
-    text:    '#F2F2F7',
-    muted:   '#9797B0'
-  },
+         намеренно другая — неон вместо сдержанного золота.
+         Посетитель выбирает тему кружками слева сверху, выбор запоминается.
+         Первая тема — по умолчанию. Названия тем — в i18n.
+         accent — основной цвет, accent2/accent3 — точки перелива,
+         cta1..cta3 — тёмные стопы главной кнопки (на них белый текст).
+         У каждой темы свой файл контакта с фото в рамке её цвета:
+         первая — contacts.vcfUrl, остальные — то же имя с -id на конце.
+         Собирает их theme-vcards.py. Каждая тема — одной строкой. --- */
+  themes: [
+    { id:'neon',   bg:'#07070C', bg2:'#0E0E1A', bg3:'#050509', accent:'#7C5CFF', accent2:'#22D3EE', accent3:'#FF3D9A', cta1:'#5B2BFF', cta2:'#8B2FE8', cta3:'#C31D7A', text:'#F2F2F7', muted:'#9797B0' },
+    { id:'sunset', bg:'#0C0807', bg2:'#1A0F0C', bg3:'#080504', accent:'#FF6B3D', accent2:'#FFC23D', accent3:'#FF3D7F', cta1:'#C9380F', cta2:'#D4561E', cta3:'#B81A50', text:'#FAF3EF', muted:'#B39C94' },
+    { id:'ocean',  bg:'#05090F', bg2:'#0A1422', bg3:'#03060A', accent:'#2F7BFF', accent2:'#22D3EE', accent3:'#34E0A1', cta1:'#1B4FD8', cta2:'#1473B8', cta3:'#0C8468', text:'#EEF5FA', muted:'#8FA3B5' },
+    { id:'gold',   bg:'#0A0907', bg2:'#16130D', bg3:'#060504', accent:'#D4AF37', accent2:'#F5E6A8', accent3:'#C27A2E', cta1:'#7E5E0E', cta2:'#98761A', cta3:'#8A4E14', text:'#F7F2E6', muted:'#A69D88' },
+    { id:'day',    scheme:'light', bg:'#F3F3F8', bg2:'#FFFFFF', bg3:'#E7E7F0', accent:'#6D4AFF', accent2:'#0891B2', accent3:'#E6337F', cta1:'#5B2BFF', cta2:'#8B2FE8', cta3:'#C31D7A', icon:'#5B3FE0', text:'#15151F', muted:'#5E5E75' }
+  ],
 
   /* --- Персона --- */
   person: {
@@ -553,7 +609,9 @@ const CONFIG = {
     maps:        '',                        // адрес не показываем
     // Готовый файл контакта рядом с index.html. Кнопка ведёт прямо на него —
     // iOS открывает карточку контакта. Пересобрать после правки CONFIG:
-    // открыть страницу с ?export в адресе и нажать кнопку, файл скачается.
+    // открыть страницу с ?export в адресе и нажать кнопку, файл скачается;
+    // положить его сюда и запустить  python theme-vcards.py .  —
+    // он разложит фото в цветах тем по файлам всех тем.
     vcfUrl:      'miran-davlatov.vcf',
     address: {
       street:  '',
@@ -598,6 +656,7 @@ const CONFIG = {
         ctaNote:'Отвечаю в течение часа',
         whatsappText:'Здравствуйте! Хочу такую же цифровую визитку.',
         actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email' },
+        themeGroup:'Цвет', themes:{ neon:'Неон', sunset:'Закат', ocean:'Океан', gold:'Золото', day:'Светлая' },
         toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
         toastFail:'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.'
       },
@@ -612,6 +671,7 @@ const CONFIG = {
         ctaNote:'Bir soat ichida javob beraman',
         whatsappText:'Assalomu alaykum! Menga ham shunday raqamli vizitka kerak.',
         actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email' },
+        themeGroup:'Rang', themes:{ neon:'Neon', sunset:'Shafaq', ocean:'Okean', gold:'Oltin', day:'Yorugʻ' },
         toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
         toastFail:'Kontaktni ochib boʻlmadi. Sahifani Safari yoki Chromeda oching va qayta urinib koʻring.'
       },
@@ -626,6 +686,7 @@ const CONFIG = {
         ctaNote:'I reply within an hour',
         whatsappText:'Hello! I would like a digital business card like this one.',
         actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email' },
+        themeGroup:'Color', themes:{ neon:'Neon', sunset:'Sunset', ocean:'Ocean', gold:'Gold', day:'Light' },
         toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
         toastFail:'Could not open the contact. Open the page in Safari or Chrome and try again.'
       }
@@ -680,6 +741,90 @@ function setLang(code){
   applyTexts();
 }
 
+/* ============================================================================
+   ЦВЕТ СТРАНИЦЫ
+   Выбор посетителя запоминается так же, как язык. Тема перекрашивает
+   CSS-переменные и переключает кнопку контакта на файл с фото в её цвете.
+   ========================================================================== */
+const THEME_KEY = 'ot-theme';
+let THEME = (function pickTheme(){
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    const found = CONFIG.themes.find(function(t){ return t.id === saved; });
+    if (found) return found;
+  } catch (e) { /* приватный режим — берём тему по умолчанию */ }
+  return CONFIG.themes[0];
+})();
+
+/** '#7C5CFF' -> '124,92,255' — для rgba(var(--accent-rgb), .x) */
+function hexRgb(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',');
+}
+
+/** Файл контакта этой темы: первая — vcfUrl, остальные — vcfUrl с -id. */
+function vcfFor(t){
+  const url = CONFIG.contacts.vcfUrl;
+  return t === CONFIG.themes[0] ? url : url.replace(/\.vcf$/i, '-' + t.id + '.vcf');
+}
+
+/** Кружок темы в переключателе: три её цвета; у светлой — белая серединка. */
+function swatch(t){
+  const ring = 'conic-gradient(' + t.accent + ', ' + t.accent2 + ', ' + t.accent3 + ', ' + t.accent + ')';
+  return t.scheme === 'light' ? 'radial-gradient(circle, ' + t.bg2 + ' 0 36%, transparent 40%), ' + ring : ring;
+}
+
+/** Перекрашивает страницу в тему t. */
+function applyTheme(t){
+  const dark = t.scheme !== 'light';
+  const vars = {
+    '--bg': t.bg, '--bg-2': t.bg2, '--bg-3': t.bg3,
+    '--accent': t.accent, '--accent-rgb': hexRgb(t.accent), '--accent-2': t.accent2, '--accent-3': t.accent3,
+    '--cta-1': t.cta1, '--cta-2': t.cta2, '--cta-3': t.cta3, '--icon': t.icon || t.accent2,
+    '--text': t.text, '--muted': t.muted,
+    // светлой теме нужны белые полупрозрачные слои и приглушённые пятна
+    '--surface':  dark ? 'rgba(255,255,255,.04)' : 'rgba(255,255,255,.7)',
+    '--pill':     dark ? 'rgba(255,255,255,.04)' : 'rgba(255,255,255,.6)',
+    '--toast-bg': dark ? 'rgba(20,20,22,.94)' : 'rgba(255,255,255,.95)',
+    '--photo-bg': t.bg2,
+    '--blob':     dark ? '1' : '.5'
+  };
+  const root = document.documentElement;
+  for (const k in vars) root.style.setProperty(k, vars[k]);
+  root.style.colorScheme = dark ? 'dark' : 'light';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = t.bg;
+
+  // «Сохранить контакт» ведёт на файл с фото в рамке этого цвета
+  document.querySelectorAll('[data-id="savecontact"]').forEach(function(a){ a.href = vcfFor(t); });
+
+  document.querySelectorAll('#themes button').forEach(function(btn){
+    btn.setAttribute('aria-pressed', String(btn.dataset.theme === t.id));
+  });
+}
+
+/** Смена цвета по нажатию: новая тема расходится кругом от кружка. */
+function setTheme(id, from){
+  const t = CONFIG.themes.find(function(x){ return x.id === id; });
+  if (!t || t === THEME) return;
+  THEME = t;
+  try { localStorage.setItem(THEME_KEY, id); } catch (e) { /* не смогли запомнить — не беда */ }
+
+  const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || calm || !from) { applyTheme(t); return; }
+
+  const r = from.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  const vt = document.startViewTransition(function(){ applyTheme(t); });
+  vt.ready.then(function(){
+    document.documentElement.animate(
+      { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + end + 'px at ' + x + 'px ' + y + 'px)'] },
+      { duration: 700, easing: 'cubic-bezier(.22,.61,.36,1)', pseudoElement: '::view-transition-new(root)' }
+    );
+  }).catch(function(){ /* анимация не удалась — цвет всё равно уже сменился */ });
+}
+
 /** Подставляет все тексты выбранного языка в уже построенную страницу. */
 function applyTexts(){
   const d = dict(), b = CONFIG.brand, c = CONFIG.contacts;
@@ -720,6 +865,13 @@ function applyTexts(){
   box.querySelectorAll('button').forEach(function(btn){
     btn.setAttribute('aria-pressed', String(btn.dataset.lang === LANG));
   });
+
+  const themeBox = document.getElementById('themes');
+  themeBox.setAttribute('aria-label', d.themeGroup);
+  themeBox.querySelectorAll('button').forEach(function(btn){
+    const name = (d.themes || {})[btn.dataset.theme] || btn.dataset.theme;
+    btn.setAttribute('aria-label', name); btn.title = name;
+  });
 }
 
 /* --- Иконки 24x24: тонкие штриховые + фирменные глифы соцсетей --- */
@@ -738,17 +890,7 @@ const ICONS = {
    РЕНДЕР СТРАНИЦЫ ИЗ КОНФИГА
    ========================================================================== */
 (function render(){
-  const t = CONFIG.theme, p = CONFIG.person, b = CONFIG.brand, c = CONFIG.contacts;
-
-  // Цвета -> CSS-переменные
-  const root = document.documentElement.style;
-  root.setProperty('--bg',        t.bg);
-  root.setProperty('--bg-2',      t.bg2);
-  root.setProperty('--accent',   t.accent);
-  root.setProperty('--accent-2', t.accent2);
-  root.setProperty('--accent-3', t.accent3);
-  root.setProperty('--text',      t.text);
-  root.setProperty('--muted',     t.muted);
+  const p = CONFIG.person, b = CONFIG.brand, c = CONFIG.contacts;
 
   // Контент
   document.getElementById('photo').src = CONFIG.photo.page;
@@ -787,6 +929,19 @@ const ICONS = {
   });
   // Сообщаем CSS фактическое число кнопок — от него считается их размер
   nav.style.setProperty('--n', nav.children.length || 1);
+
+  // Кружки переключения цвета
+  const themeBox = document.getElementById('themes');
+  CONFIG.themes.forEach(function(t){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.theme = t.id;
+    btn.innerHTML = '<i></i>';
+    btn.firstChild.style.setProperty('--sw', swatch(t));
+    btn.addEventListener('click', function(){ setTheme(t.id, btn); });
+    themeBox.appendChild(btn);
+  });
+  applyTheme(THEME);
 
   // Кнопки переключения языка
   const langBox = document.getElementById('langs');

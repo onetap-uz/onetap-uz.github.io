@@ -23,18 +23,29 @@
    Все данные и цвета настраиваются в объекте CONFIG (ниже, в <script>).
    ============================================================ */
 
-/* --- Дизайн-токены. Цвета перезаписываются из CONFIG.theme при загрузке --- */
+/* --- Дизайн-токены. Цвета перезаписываются из темы, выбранной посетителем
+       (CONFIG.themes), при загрузке и при каждой смене цвета --- */
 :root{
   --bg:            #0B0B0C;   /* глубокий графит — база */
   --bg-2:          #141416;   /* верхняя точка градиента */
+  --bg-3:          #08080A;   /* нижняя точка градиента */
+  --glow-top:      #1A1A1D;   /* светлое пятно у верхнего края */
   --gold:          #C9A227;   /* основное золото бренда */
+  --gold-rgb:      201,162,39;   /* то же золото — для полупрозрачных оттенков */
   --gold-soft:     #E8D9A8;   /* шампань-золото (блик) */
   --gold-deep:     #8B6F1E;   /* тёмное золото (тень градиента) */
+  --cta-end:       #B08D1C;   /* нижняя точка градиента главной кнопки */
+  --cta-text:      #14110A;   /* текст на главной кнопке */
+  --icon:          #E8D9A8;   /* иконки в круглых кнопках */
   --text:          #F4F1EA;   /* основной текст */
   --muted:         #9A948A;   /* вторичный текст */
-  --line:          rgba(201,162,39,.28);   /* тонкие линии */
+  --line:          rgba(var(--gold-rgb),.28);   /* тонкие линии */
   --surface:       rgba(255,255,255,.035); /* фон круглых кнопок */
   --surface-line:  rgba(232,217,168,.20);
+  --pill:          rgba(255,255,255,.03);  /* фон переключателей языка и цвета */
+  --toast-bg:      rgba(20,20,22,.94);
+  --photo-bg:      #1a1a1d;
+  --shadow:        rgba(0,0,0,.55);
 
   --ease: cubic-bezier(.22,.61,.36,1);
 }
@@ -47,8 +58,8 @@ html,body{ min-height:100%; }
 body{
   margin:0;
   background:
-    radial-gradient(120% 80% at 50% -10%, #1A1A1D 0%, transparent 60%),
-    linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 42%, #08080A 100%);
+    radial-gradient(120% 80% at 50% -10%, var(--glow-top) 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 42%, var(--bg-3) 100%);
   background-attachment:fixed;
   color:var(--text);
   font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -81,8 +92,34 @@ body{
 .glow{
   position:absolute; top:-6%; left:50%; translate:-50% 0;
   width:min(560px, 100%); aspect-ratio:1;
-  background:radial-gradient(circle, rgba(201,162,39,.16) 0%, rgba(201,162,39,.05) 38%, transparent 68%);
+  background:radial-gradient(circle, rgba(var(--gold-rgb),.16) 0%, rgba(var(--gold-rgb),.05) 38%, transparent 68%);
   pointer-events:none; z-index:0;
+  animation:breathe 7s ease-in-out infinite;       /* свечение медленно «дышит» */
+}
+@keyframes breathe{
+  0%,100%{ opacity:.75; transform:scale(.95); }
+  50%    { opacity:1;   transform:scale(1.06); }
+}
+
+/* Золотая пыль: редкие искры медленно поднимаются через весь экран.
+   Точки создаёт скрипт (dust), позиции и скорость у каждой свои. */
+.dust{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.dust i{
+  position:absolute; bottom:-12px;
+  width:var(--size); height:var(--size);
+  border-radius:50%;
+  background:var(--dust, var(--gold-soft));
+  box-shadow:0 0 6px 1px rgba(var(--gold-rgb),.7);
+  opacity:0;
+  animation:float var(--dur) linear var(--delay) infinite;
+  will-change:transform, opacity;
+}
+@keyframes float{
+  0%  { transform:translate3d(0,0,0);                  opacity:0;   }
+  12% {                                                opacity:.75; }
+  55% {                                                opacity:.3;  }
+  85% {                                                opacity:.6;  }
+  100%{ transform:translate3d(var(--drift),-108vh,0);  opacity:0;   }
 }
 
 .hero{
@@ -107,17 +144,33 @@ body{
   border:1px solid var(--line);
 }
 .avatar__ring{                       /* золотая рамка-градиент */
+  position:relative;
   width:100%; height:100%;
   border-radius:50%;
   padding:2px;
   background:linear-gradient(150deg, var(--gold-soft) 0%, var(--gold) 38%, var(--gold-deep) 62%, var(--gold-soft) 100%);
-  box-shadow:0 18px 44px rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.35);
+  box-shadow:0 18px 44px var(--shadow), inset 0 0 0 1px rgba(0,0,0,.35);
 }
+/* Блик медленно обходит рамку по кругу; само фото остаётся неподвижным */
+.avatar__ring::before{
+  content:''; position:absolute; inset:0;
+  border-radius:50%;
+  background:conic-gradient(from 0deg, var(--gold-deep), var(--gold), var(--gold-soft), var(--gold), var(--gold-deep), var(--gold), var(--gold-soft), var(--gold), var(--gold-deep));
+  animation:spin 9s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
 .avatar__ring img{
+  position:relative; z-index:1;
   display:block; width:100%; height:100%;
   border-radius:50%;
   object-fit:cover;
-  background:#1a1a1d;
+  background:var(--photo-bg);
+}
+/* Внешнее тонкое кольцо мягко пульсирует */
+.avatar::after{ animation:halo 3.6s ease-in-out infinite; }
+@keyframes halo{
+  0%,100%{ transform:scale(1);    opacity:1;  }
+  50%    { transform:scale(1.045); opacity:.45; }
 }
 
 /* ---------- 2. Имя ---------- */
@@ -166,6 +219,12 @@ body{
   background:var(--gold);
   opacity:.85;
 }
+/* Линии прорисовываются от ромба к краям, ромб проворачивается на месте */
+.divider span{ animation:draw .9s var(--ease) 520ms backwards; transform-origin:right center; }
+.divider span:last-child{ transform-origin:left center; }
+.divider i{ animation:gem 1s var(--ease) 440ms backwards; }
+@keyframes draw{ from{ transform:scaleX(0); } }
+@keyframes gem { from{ transform:scale(0) rotate(-180deg); opacity:0; } }
 
 /* ---------- 6. Главная кнопка ---------- */
 .cta{
@@ -173,22 +232,41 @@ body{
   width:100%; max-width:340px;
   min-height:clamp(52px, 7.2vh, 58px);
   padding:0 22px;
+  position:relative; overflow:hidden;   /* блик не выходит за края кнопки */
   border:0; border-radius:100px;
-  background:linear-gradient(135deg, var(--gold-soft) 0%, var(--gold) 52%, #B08D1C 100%);
-  color:#14110A;
+  background:linear-gradient(135deg, var(--gold-soft) 0%, var(--gold) 52%, var(--cta-end) 100%);
+  color:var(--cta-text);
   text-decoration:none;              /* кнопка — это ссылка <a> на .vcf */
   font-family:'Inter', sans-serif;
   font-size:clamp(14px, 4vw, 15.5px);
   font-weight:500;
   letter-spacing:.035em;
   cursor:pointer;
-  box-shadow:0 12px 30px rgba(201,162,39,.24), 0 2px 6px rgba(0,0,0,.4);
+  box-shadow:0 12px 30px rgba(var(--gold-rgb),.24), 0 2px 6px rgba(0,0,0,.4);
   transition:transform .18s var(--ease), box-shadow .25s var(--ease), filter .2s var(--ease);
 }
-.cta svg{ width:18px; height:18px; flex:none; }
+.cta svg{ width:18px; height:18px; flex:none; position:relative; z-index:1; }
+.cta span{ position:relative; z-index:1; }
+/* Блик пробегает по кнопке раз в несколько секунд */
+.cta::after{
+  content:''; position:absolute; top:0; bottom:0; left:0;
+  width:36%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform:translateX(-180%) skewX(-18deg);
+  animation:shine 5s ease-in-out 1.8s infinite;
+}
+@keyframes shine{
+  0%, 64% { transform:translateX(-180%) skewX(-18deg); }
+  100%    { transform:translateX(360%)  skewX(-18deg); }
+}
+/* Мягкая волна вокруг кнопки: взгляд возвращается к ней сам */
+@keyframes ctaPulse{
+  0%,100%{ box-shadow:0 12px 30px rgba(var(--gold-rgb),.24), 0 2px 6px rgba(0,0,0,.4), 0 0 0 0 rgba(var(--gold-rgb),.38); }
+  60%    { box-shadow:0 14px 34px rgba(var(--gold-rgb),.32), 0 2px 6px rgba(0,0,0,.4), 0 0 0 11px rgba(var(--gold-rgb),0); }
+}
 .cta:active{                       /* тактильный отклик на нажатие */
   transform:scale(.965);
-  box-shadow:0 6px 16px rgba(201,162,39,.20);
+  box-shadow:0 6px 16px rgba(var(--gold-rgb),.20);
   filter:brightness(.97);
 }
 .cta:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
@@ -212,22 +290,26 @@ body{
   border-radius:50%;
   border:1px solid var(--surface-line);
   background:var(--surface);
-  color:var(--gold-soft);
+  color:var(--icon);
   text-decoration:none;
   -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
   transition:transform .18s var(--ease), border-color .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+  /* кнопки выскакивают по очереди; --i (номер кнопки) задаёт render().
+     backwards, а не both: после появления :active снова управляет transform */
+  animation:pop .55s var(--ease) calc(640ms + var(--i, 0) * 70ms) backwards;
 }
+@keyframes pop{ from{ opacity:0; transform:translateY(10px) scale(.6); } }
 .links a svg{ width:clamp(17px, 4.6vw, 20px); height:auto; }
 .links a:active{
   transform:scale(.9);
-  background:rgba(201,162,39,.14);
+  background:rgba(var(--gold-rgb),.14);
   border-color:var(--gold);
   color:#fff;
 }
 .links a:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
 @media (hover:hover){
-  .links a:hover{ border-color:var(--gold); background:rgba(201,162,39,.10); }
-  .cta:hover{ box-shadow:0 16px 36px rgba(201,162,39,.3); }
+  .links a:hover{ border-color:var(--gold); background:rgba(var(--gold-rgb),.10); }
+  .cta:hover{ box-shadow:0 16px 36px rgba(var(--gold-rgb),.3); }
 }
 
 /* ---------- 8. Подвал: логотип и слоган ---------- */
@@ -270,7 +352,7 @@ body{
   padding:3px;
   border:1px solid var(--surface-line);
   border-radius:100px;
-  background:rgba(255,255,255,.03);
+  background:var(--pill);
   -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
 }
 .langs button{
@@ -284,11 +366,48 @@ body{
   transition:color .2s var(--ease), background .2s var(--ease), transform .15s var(--ease);
 }
 .langs button[aria-pressed="true"]{
-  background:rgba(201,162,39,.16);
+  background:rgba(var(--gold-rgb),.16);
   color:var(--gold);
 }
 .langs button:active{ transform:scale(.92); }
 .langs button:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:2px; }
+
+/* ---------- Переключатель цвета (CONFIG.themes) ----------
+   Зеркально языкам — слева сверху. Кружок = цвет темы, выбранный обведён. */
+.themes{
+  position:absolute; z-index:3;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  left:16px;
+  display:flex; gap:1px;
+  padding:3px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:var(--pill);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.themes button{
+  display:grid; place-items:center;
+  width:24px; height:24px;
+  padding:0; border:0; border-radius:50%;
+  background:none; cursor:pointer;
+}
+.themes button i{
+  width:13px; height:13px;
+  border-radius:50%;
+  background:var(--sw);
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.35);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.themes button[aria-pressed="true"] i{
+  transform:scale(1.08);
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.35), 0 0 0 2px var(--bg), 0 0 0 3.2px var(--gold);
+}
+.themes button:active i{ transform:scale(.8); }
+.themes button:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:1px; }
+
+/* Смена цвета: новая тема растекается кругом от нажатого кружка
+   (View Transitions; где их нет — цвет меняется мгновенно) */
+::view-transition-old(root), ::view-transition-new(root){ animation:none; mix-blend-mode:normal; }
 
 /* ---------- Стрелка «листайте дальше» ---------- */
 .scroll-hint{
@@ -342,7 +461,7 @@ body{
   content:''; position:absolute; left:-28px; top:18px;
   width:8px; height:8px; rotate:45deg;
   background:var(--gold);
-  box-shadow:0 0 0 4px var(--bg), 0 0 12px rgba(201,162,39,.75);
+  box-shadow:0 0 0 4px var(--bg), 0 0 12px rgba(var(--gold-rgb),.75);
 }
 
 .stop{
@@ -382,7 +501,7 @@ body{
 .route li.finale::before{
   width:11px; height:11px;
   top:22px; left:-29.5px;
-  box-shadow:0 0 0 4px var(--bg), 0 0 18px rgba(201,162,39,.9);
+  box-shadow:0 0 0 4px var(--bg), 0 0 18px rgba(var(--gold-rgb),.9);
 }
 .finale .stop{ aspect-ratio:16/9; border-color:var(--line); }
 .finale .stop::after{
@@ -460,7 +579,7 @@ body{
   padding:11px 18px;
   border-radius:100px;
   border:1px solid var(--surface-line);
-  background:rgba(20,20,22,.94);
+  background:var(--toast-bg);
   -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
   box-shadow:0 12px 34px rgba(0,0,0,.5);
   color:var(--text);
@@ -486,10 +605,18 @@ body{
   from{ opacity:0; transform:translateY(10px) scale(.9); }
   to  { opacity:1; transform:translateY(0) scale(1); }
 }
+/* У главной кнопки к появлению добавляется волна (одно правило на оба,
+   иначе .reveal перекрыл бы анимацию кнопки) */
+.cta.reveal{
+  animation:rise .85s var(--ease) var(--d, 0ms) forwards, ctaPulse 3.2s ease-in-out 1.6s infinite;
+}
 
 @media (prefers-reduced-motion:reduce){
   html{ scroll-behavior:auto; }
-  .reveal{ animation:none; opacity:1; }
+  .reveal, .cta.reveal{ animation:none; opacity:1; }
+  .glow, .avatar::after, .avatar__ring::before, .cta::after,
+  .divider span, .divider i, .links a{ animation:none !important; }
+  .cta::after{ display:none; }
   .scroll-hint{ animation:none; }
   .route li{ opacity:1; transform:none; }   /* остановки видны без прокрутки */
   *{ transition-duration:.01ms !important; }
@@ -508,6 +635,9 @@ body{
 <body>
   <main class="card">
     <div class="glow" aria-hidden="true"></div>
+
+    <!-- Переключатель цвета (CONFIG.themes) -->
+    <div class="themes" id="themes" role="group"></div>
 
     <!-- Переключатель языка (CONFIG.i18n) -->
     <div class="langs" id="langs" role="group"></div>
@@ -569,7 +699,8 @@ const CONFIG = {
         bio:'Ваш первый контакт в отеле: бронирование, заселение и любой вопрос во время проживания.',
         ctaLabel:'Написать в Telegram',
         whatsappText:'Здравствуйте! Я по визитке Porto Bello — хочу уточнить по размещению.',
-        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт', map:'Адрес' }, routesTitle:'Куда мы отправляем',
+        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт' }, routesTitle:'Куда мы отправляем',
+        themeGroup:'Цвет', themes:{ gold:'Золото', platinum:'Платина', emerald:'Изумруд', sapphire:'Сапфир', pearl:'Жемчуг' },
         toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
         toastFail:'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.'
       },
@@ -581,7 +712,8 @@ const CONFIG = {
         bio:'Mehmonxonadagi birinchi aloqangiz: bron, joylashtirish va yashash davridagi har qanday savol.',
         ctaLabel:'Telegramda yozish',
         whatsappText:'Assalomu alaykum! Porto Bello vizitkasi orqali yozyapman — joylashuv boʻyicha savolim bor.',
-        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt', map:'Manzil' }, routesTitle:'Sizni qayerlarga yuboramiz',
+        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt' }, routesTitle:'Sizni qayerlarga yuboramiz',
+        themeGroup:'Rang', themes:{ gold:'Oltin', platinum:'Platina', emerald:'Zumrad', sapphire:'Sapfir', pearl:'Marvarid' },
         toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
         toastFail:'Kontaktni ochib boʻlmadi. Sahifani Safari yoki Chromeda oching va qayta urinib koʻring.'
       },
@@ -593,23 +725,28 @@ const CONFIG = {
         bio:'Your first contact at the hotel: booking, check-in and anything you need during your stay.',
         ctaLabel:'Message on Telegram',
         whatsappText:'Hello! I found your Porto Bello card — I have a question about my stay.',
-        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website', map:'Address' }, routesTitle:'Where we send you',
+        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website' }, routesTitle:'Where we send you',
+        themeGroup:'Color', themes:{ gold:'Gold', platinum:'Platinum', emerald:'Emerald', sapphire:'Sapphire', pearl:'Pearl' },
         toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
         toastFail:'Could not open the contact. Open the page in Safari or Chrome and try again.'
       }
     }
   },
 
-  /* --- Фирменные цвета (перезаписывают CSS-переменные) --- */
-  theme: {
-    bg:       '#0B0B0C',
-    bg2:      '#141416',
-    gold:     '#C9A227',
-    goldSoft: '#E8D9A8',
-    goldDeep: '#8B6F1E',
-    text:     '#F4F1EA',
-    muted:    '#9A948A'
-  },
+  /* --- Цвета. Посетитель выбирает тему кружками слева сверху, выбор
+         запоминается. Первая тема — по умолчанию. Названия тем — в i18n.
+         gold/goldSoft/goldDeep — акцент темы (для не-золотых тем тоже).
+         У каждой темы свой файл контакта с фото в рамке её цвета:
+         первая — contacts.vcfUrl, остальные — то же имя с -id на конце
+         (javokhir-ergashev-emerald.vcf). Собирает их theme-vcards.py.
+         Каждая тема — одной строкой: её так читает theme-vcards.py. --- */
+  themes: [
+    { id:'gold',     bg:'#0B0B0C', bg2:'#141416', bg3:'#08080A', glowTop:'#1A1A1D', gold:'#C9A227', goldSoft:'#E8D9A8', goldDeep:'#8B6F1E', ctaEnd:'#B08D1C', ctaText:'#14110A', text:'#F4F1EA', muted:'#9A948A' },
+    { id:'platinum', bg:'#0A0B0D', bg2:'#14161A', bg3:'#07080A', glowTop:'#1B1E23', gold:'#B7BEC9', goldSoft:'#EEF1F5', goldDeep:'#69707B', ctaEnd:'#8E96A2', ctaText:'#111317', text:'#F2F4F7', muted:'#979CA6' },
+    { id:'emerald',  bg:'#07100C', bg2:'#0D1914', bg3:'#050B08', glowTop:'#13241C', gold:'#3CB98A', goldSoft:'#BFEBD8', goldDeep:'#1B6A4D', ctaEnd:'#25966C', ctaText:'#04140D', text:'#EEF6F2', muted:'#8FA69C' },
+    { id:'sapphire', bg:'#080B13', bg2:'#0F1422', bg3:'#05070D', glowTop:'#161D31', gold:'#5C8FF0', goldSoft:'#CFDDFB', goldDeep:'#2A4C9C', ctaEnd:'#3F72D6', ctaText:'#060E1F', text:'#F1F4FA', muted:'#929CB2' },
+    { id:'pearl',    scheme:'light', bg:'#F4EFE6', bg2:'#FBF8F2', bg3:'#EDE6DA', glowTop:'#FFFFFF', gold:'#A8841E', goldSoft:'#E3CD8A', goldDeep:'#7A5E12', ctaEnd:'#8F6F14', ctaText:'#14110A', icon:'#8A6A14', text:'#1D1A15', muted:'#6F675B' }
+  ],
 
   /* --- Персона --- */
   person: {
@@ -641,17 +778,19 @@ const CONFIG = {
     // «отправить» — и его номер попадает к Нозиме. Это ценнее сохранённого контакта.
     whatsappText:'Здравствуйте! Я по визитке Porto Bello — хочу уточнить по размещению.',
     instagram:   'https://instagram.com/_john_8088',
-    maps:        'https://maps.app.goo.gl/o7FmVwJsch6SC1XX9',
+    maps:        '',                        // адрес не показываем — ни на странице, ни в контакте
     // Готовый файл контакта рядом с index.html. Кнопка ведёт прямо на него —
     // iOS открывает карточку контакта. Пересобрать после правки CONFIG:
-    // открыть страницу с ?export в адресе и нажать кнопку, файл скачается.
+    // открыть страницу с ?export в адресе и нажать кнопку, файл скачается;
+    // положить его сюда и запустить  python theme-vcards.py javokhir  —
+    // он разложит фото в цветах тем по файлам всех тем.
     vcfUrl:      'javokhir-ergashev.vcf',
     address: {
-      street:  'Botkin Street 119',
-      city:    'Tashkent',
+      street:  '',
+      city:    '',
       region:  '',
       zip:     '',
-      country: 'Uzbekistan'
+      country: ''
     }
   },
 
@@ -683,8 +822,7 @@ const CONFIG = {
     { id:'whatsapp',    label:'WhatsApp',          href: c => c.whatsapp + (c.whatsappText ? '?text=' + encodeURIComponent(c.whatsappText) : '') },
     { id:'instagram',   label:'Instagram',         href: c => c.instagram },
     { id:'email',       label:'Email',             href: c => 'mailto:' + c.email },
-    { id:'website',     label:'Сайт',              href: c => c.website },
-    { id:'map',         label:'Адрес',             href: c => c.maps }
+    { id:'website',     label:'Сайт',              href: c => c.website }
   ]
 };
 
@@ -716,6 +854,93 @@ function setLang(code){
   LANG = code;
   try { localStorage.setItem(LANG_KEY, code); } catch (e) { /* не смогли запомнить — не беда */ }
   applyTexts();
+}
+
+/* ============================================================================
+   ЦВЕТ СТРАНИЦЫ
+   Выбор посетителя запоминается так же, как язык. Тема перекрашивает
+   CSS-переменные и переключает кнопку контакта на файл с фото в её цвете.
+   ========================================================================== */
+const THEME_KEY = 'pb-theme';
+let THEME = (function pickTheme(){
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    const found = CONFIG.themes.find(function(t){ return t.id === saved; });
+    if (found) return found;
+  } catch (e) { /* приватный режим — берём тему по умолчанию */ }
+  return CONFIG.themes[0];
+})();
+
+/** '#C9A227' -> '201,162,39' — для rgba(var(--gold-rgb), .x) */
+function hexRgb(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',');
+}
+
+/** Файл контакта этой темы: первая — vcfUrl, остальные — vcfUrl с -id. */
+function vcfFor(t){
+  const url = CONFIG.contacts.vcfUrl;
+  return t === CONFIG.themes[0] ? url : url.replace(/\.vcf$/i, '-' + t.id + '.vcf');
+}
+
+/** Кружок темы в переключателе. */
+function swatch(t){
+  return t.scheme === 'light'
+    ? 'linear-gradient(135deg, ' + t.bg2 + ' 0%, ' + t.bg + ' 45%, ' + t.goldSoft + ' 100%)'
+    : 'linear-gradient(135deg, ' + t.goldSoft + ' 0%, ' + t.gold + ' 50%, ' + t.goldDeep + ' 100%)';
+}
+
+/** Перекрашивает страницу в тему t. */
+function applyTheme(t){
+  const dark = t.scheme !== 'light';
+  const vars = {
+    '--bg': t.bg, '--bg-2': t.bg2, '--bg-3': t.bg3, '--glow-top': t.glowTop,
+    '--gold': t.gold, '--gold-rgb': hexRgb(t.gold), '--gold-soft': t.goldSoft, '--gold-deep': t.goldDeep,
+    '--cta-end': t.ctaEnd, '--cta-text': t.ctaText, '--icon': t.icon || t.goldSoft,
+    '--text': t.text, '--muted': t.muted,
+    // светлой теме нужны тёмные полупрозрачные слои вместо светлых
+    '--surface':      dark ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.62)',
+    '--surface-line': 'rgba(' + hexRgb(dark ? t.goldSoft : t.gold) + (dark ? ',.20)' : ',.34)'),
+    '--pill':         dark ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.55)',
+    '--toast-bg':     dark ? 'rgba(20,20,22,.94)' : 'rgba(255,255,255,.95)',
+    '--photo-bg':     t.bg2,
+    '--shadow':       dark ? 'rgba(0,0,0,.55)' : 'rgba(70,52,12,.22)',
+    '--dust':         dark ? t.goldSoft : t.gold
+  };
+  const root = document.documentElement;
+  for (const k in vars) root.style.setProperty(k, vars[k]);
+  root.style.colorScheme = dark ? 'dark' : 'light';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = t.bg;
+
+  // «Сохранить контакт» ведёт на файл с фото в рамке этого цвета
+  document.querySelectorAll('[data-id="savecontact"]').forEach(function(a){ a.href = vcfFor(t); });
+
+  document.querySelectorAll('#themes button').forEach(function(btn){
+    btn.setAttribute('aria-pressed', String(btn.dataset.theme === t.id));
+  });
+}
+
+/** Смена цвета по нажатию: новая тема расходится кругом от кружка. */
+function setTheme(id, from){
+  const t = CONFIG.themes.find(function(x){ return x.id === id; });
+  if (!t || t === THEME) return;
+  THEME = t;
+  try { localStorage.setItem(THEME_KEY, id); } catch (e) { /* не смогли запомнить — не беда */ }
+
+  const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || calm || !from) { applyTheme(t); return; }
+
+  const r = from.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  const vt = document.startViewTransition(function(){ applyTheme(t); });
+  vt.ready.then(function(){
+    document.documentElement.animate(
+      { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + end + 'px at ' + x + 'px ' + y + 'px)'] },
+      { duration: 700, easing: 'cubic-bezier(.22,.61,.36,1)', pseudoElement: '::view-transition-new(root)' }
+    );
+  }).catch(function(){ /* анимация не удалась — цвет всё равно уже сменился */ });
 }
 
 /** Подставляет все тексты выбранного языка в уже построенную страницу. */
@@ -778,6 +1003,13 @@ function applyTexts(){
   box.querySelectorAll('button').forEach(function(btn){
     btn.setAttribute('aria-pressed', String(btn.dataset.lang === LANG));
   });
+
+  const themeBox = document.getElementById('themes');
+  themeBox.setAttribute('aria-label', d.themeGroup);
+  themeBox.querySelectorAll('button').forEach(function(btn){
+    const name = (d.themes || {})[btn.dataset.theme] || btn.dataset.theme;
+    btn.setAttribute('aria-label', name); btn.title = name;
+  });
 }
 
 /**
@@ -813,17 +1045,7 @@ const ICONS = {
    РЕНДЕР СТРАНИЦЫ ИЗ КОНФИГА
    ========================================================================== */
 (function render(){
-  const t = CONFIG.theme, p = CONFIG.person, b = CONFIG.brand, c = CONFIG.contacts;
-
-  // Цвета -> CSS-переменные
-  const root = document.documentElement.style;
-  root.setProperty('--bg',        t.bg);
-  root.setProperty('--bg-2',      t.bg2);
-  root.setProperty('--gold',      t.gold);
-  root.setProperty('--gold-soft', t.goldSoft);
-  root.setProperty('--gold-deep', t.goldDeep);
-  root.setProperty('--text',      t.text);
-  root.setProperty('--muted',     t.muted);
+  const p = CONFIG.person, b = CONFIG.brand, c = CONFIG.contacts;
 
   // Контент
   document.getElementById('photo').src = CONFIG.photo.page;
@@ -847,12 +1069,43 @@ const ICONS = {
     el.href = href;
     el.innerHTML = ICONS[a.id] || '';
     el.dataset.id = a.id;
+    el.style.setProperty('--i', nav.children.length);   // очередь появления
     // внешние ссылки — в новой вкладке; tel:/mailto: — в текущей
     if (/^https?:/i.test(href)) { el.target = '_blank'; el.rel = 'noopener noreferrer'; }
     nav.appendChild(el);
   });
   // Сообщаем CSS фактическое число кнопок — от него считается их размер
   nav.style.setProperty('--n', nav.children.length || 1);
+
+  // Кружки переключения цвета
+  const themeBox = document.getElementById('themes');
+  CONFIG.themes.forEach(function(t){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.theme = t.id;
+    btn.innerHTML = '<i></i>';
+    btn.firstChild.style.setProperty('--sw', swatch(t));
+    btn.addEventListener('click', function(){ setTheme(t.id, btn); });
+    themeBox.appendChild(btn);
+  });
+  applyTheme(THEME);
+
+  // Золотая пыль. Кому движение мешает — её просто нет
+  if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    const dust = document.createElement('div');
+    dust.className = 'dust';
+    dust.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement('i');
+      s.style.left = (Math.random() * 100).toFixed(1) + '%';
+      s.style.setProperty('--size',  (1.4 + Math.random() * 2.2).toFixed(1) + 'px');
+      s.style.setProperty('--dur',   (10 + Math.random() * 10).toFixed(1) + 's');
+      s.style.setProperty('--delay', (-Math.random() * 20).toFixed(1) + 's');   // сразу в полёте
+      s.style.setProperty('--drift', Math.round((Math.random() - .5) * 70) + 'px');
+      dust.appendChild(s);
+    }
+    document.body.prepend(dust);
+  }
 
   // Кнопки переключения языка
   const langBox = document.getElementById('langs');
@@ -931,7 +1184,9 @@ function buildVCard(){
 
   if (c.instagram) L.push('X-SOCIALPROFILE;TYPE=instagram:' + c.instagram);
 
-  L.push('ADR;TYPE=WORK:;;' + esc(ad.street) + ';' + esc(ad.city) + ';' + esc(ad.region) + ';' + esc(ad.zip) + ';' + esc(ad.country));
+  if (ad.street || ad.city || ad.country) {
+    L.push('ADR;TYPE=WORK:;;' + esc(ad.street) + ';' + esc(ad.city) + ';' + esc(ad.region) + ';' + esc(ad.zip) + ';' + esc(ad.country));
+  }
   if (b.tagline) L.push('NOTE:' + esc(b.tagline));
 
   // Фото контакта (base64) — самая длинная строка, сворачивается функцией fold()

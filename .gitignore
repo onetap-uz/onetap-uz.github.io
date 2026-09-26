@@ -3,3 +3,6 @@
 !miran-davlatov.vcf
 !nozima/nozima-jumadullayeva.vcf
 !javokhir/javokhir-ergashev.vcf
+# контакты в цветах тем (theme-vcards.py)
+!miran-davlatov-*.vcf
+!javokhir/javokhir-ergashev-*.vcf
