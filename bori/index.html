@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0C">
+<meta name="color-scheme" content="dark">
+<title>Abdulboriy Shukhratov — Social Media &amp; Video</title>
+<meta name="description" content="Цифровая визитка. Abdulboriy Shukhratov — Social Media Manager &amp; Videographer. Сохраните контакт в один тап.">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Abdulboriy Shukhratov — Social Media &amp; Video">
+<meta property="og:description" content="Снимаю видео и веду соцсети, которые работают на ваш бизнес.">
+<meta property="og:url" content="https://onetap-uz.github.io/bori/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   PORTO BELLO TOUR — NFC digital business card
+   Тема: тёмный графит + золото. Mobile-first, первый экран без скролла.
+   Все данные и цвета настраиваются в объекте CONFIG (ниже, в <script>).
+   ============================================================ */
+
+/* --- Дизайн-токены. Цвета перезаписываются из темы, выбранной посетителем
+       (CONFIG.themes), при загрузке и при каждой смене цвета --- */
+:root{
+  --bg:            #0B0B0C;   /* глубокий графит — база */
+  --bg-2:          #141416;   /* верхняя точка градиента */
+  --bg-3:          #08080A;   /* нижняя точка градиента */
+  --glow-top:      #1A1A1D;   /* светлое пятно у верхнего края */
+  --gold:          #C9A227;   /* основное золото бренда */
+  --gold-rgb:      201,162,39;   /* то же золото — для полупрозрачных оттенков */
+  --gold-soft:     #E8D9A8;   /* шампань-золото (блик) */
+  --gold-deep:     #8B6F1E;   /* тёмное золото (тень градиента) */
+  --cta-end:       #B08D1C;   /* нижняя точка градиента главной кнопки */
+  --cta-text:      #14110A;   /* текст на главной кнопке */
+  --icon:          #E8D9A8;   /* иконки в круглых кнопках */
+  --text:          #F4F1EA;   /* основной текст */
+  --muted:         #9A948A;   /* вторичный текст */
+  --line:          rgba(var(--gold-rgb),.28);   /* тонкие линии */
+  --surface:       rgba(255,255,255,.035); /* фон круглых кнопок */
+  --surface-line:  rgba(232,217,168,.20);
+  --pill:          rgba(255,255,255,.03);  /* фон переключателей языка и цвета */
+  --toast-bg:      rgba(20,20,22,.94);
+  --photo-bg:      #1a1a1d;
+  --shadow:        rgba(0,0,0,.55);
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; }        /* плавный переход по стрелке «листайте» */
+html,body{ min-height:100%; }
+
+body{
+  margin:0;
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--glow-top) 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 42%, var(--bg-3) 100%);
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* --- Каркас: одна колонка на всю высоту экрана (svh — без скачков в мобильных браузерах) --- */
+.card{
+  position:relative;
+  min-height:100vh;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + clamp(16px, 3vh, 32px))
+    20px
+    calc(env(safe-area-inset-bottom, 0px) + clamp(14px, 2.4vh, 26px));
+  max-width:520px;
+  margin-inline:auto;
+}
+
+/* Мягкое золотое свечение за фотографией (ширина ограничена шириной карточки,
+   иначе на узких экранах появляется горизонтальный скролл) */
+.glow{
+  position:absolute; top:-6%; left:50%; translate:-50% 0;
+  width:min(560px, 100%); aspect-ratio:1;
+  background:radial-gradient(circle, rgba(var(--gold-rgb),.16) 0%, rgba(var(--gold-rgb),.05) 38%, transparent 68%);
+  pointer-events:none; z-index:0;
+  animation:breathe 7s ease-in-out infinite;       /* свечение медленно «дышит» */
+}
+@keyframes breathe{
+  0%,100%{ opacity:.75; transform:scale(.95); }
+  50%    { opacity:1;   transform:scale(1.06); }
+}
+
+/* Золотая пыль: редкие искры медленно поднимаются через весь экран.
+   Точки создаёт скрипт (dust), позиции и скорость у каждой свои. */
+.dust{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.dust i{
+  position:absolute; bottom:-12px;
+  width:var(--size); height:var(--size);
+  border-radius:50%;
+  background:var(--dust, var(--gold-soft));
+  box-shadow:0 0 6px 1px rgba(var(--gold-rgb),.7);
+  opacity:0;
+  animation:float var(--dur) linear var(--delay) infinite;
+  will-change:transform, opacity;
+}
+@keyframes float{
+  0%  { transform:translate3d(0,0,0);                  opacity:0;   }
+  12% {                                                opacity:.75; }
+  55% {                                                opacity:.3;  }
+  85% {                                                opacity:.6;  }
+  100%{ transform:translate3d(var(--drift),-108vh,0);  opacity:0;   }
+}
+
+.hero{
+  position:relative; z-index:1;
+  flex:1 1 auto;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:100%;
+  text-align:center;
+}
+
+/* ---------- 1. Круглое фото в тонкой золотой рамке ---------- */
+.avatar{
+  position:relative;
+  width:clamp(114px, 33vw, 156px);
+  aspect-ratio:1;
+  margin-bottom:clamp(18px, 3.2vh, 28px);
+}
+/* внешнее тонкое кольцо — держится на расстоянии от фото */
+.avatar::after{
+  content:''; position:absolute; inset:-9px;
+  border-radius:50%;
+  border:1px solid var(--line);
+}
+.avatar__ring{                       /* золотая рамка-градиент */
+  position:relative;
+  width:100%; height:100%;
+  border-radius:50%;
+  padding:2px;
+  background:linear-gradient(150deg, var(--gold-soft) 0%, var(--gold) 38%, var(--gold-deep) 62%, var(--gold-soft) 100%);
+  box-shadow:0 18px 44px var(--shadow), inset 0 0 0 1px rgba(0,0,0,.35);
+}
+/* Блик медленно обходит рамку по кругу; само фото остаётся неподвижным */
+.avatar__ring::before{
+  content:''; position:absolute; inset:0;
+  border-radius:50%;
+  background:conic-gradient(from 0deg, var(--gold-deep), var(--gold), var(--gold-soft), var(--gold), var(--gold-deep), var(--gold), var(--gold-soft), var(--gold), var(--gold-deep));
+  animation:spin 9s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.avatar__ring img{
+  position:relative; z-index:1;
+  display:block; width:100%; height:100%;
+  border-radius:50%;
+  object-fit:cover;
+  background:var(--photo-bg);
+}
+/* Внешнее тонкое кольцо мягко пульсирует */
+.avatar::after{ animation:halo 3.6s ease-in-out infinite; }
+@keyframes halo{
+  0%,100%{ transform:scale(1);    opacity:1;  }
+  50%    { transform:scale(1.045); opacity:.45; }
+}
+
+/* ---------- 2. Имя ---------- */
+.name{
+  margin:0;
+  font-family:'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-weight:500;
+  font-size:clamp(25px, 7.4vw, 33px);
+  line-height:1.18;
+  letter-spacing:.005em;
+}
+
+/* ---------- 3. Должность ---------- */
+.role{
+  margin:clamp(9px, 1.6vh, 13px) 0 0;
+  color:var(--gold);
+  font-size:clamp(9.5px, 2.7vw, 11px);
+  font-weight:400;
+  text-transform:uppercase;
+  letter-spacing:.26em;
+  text-indent:.26em;            /* компенсируем разрядку последней буквы */
+}
+
+/* ---------- 4. Bio ---------- */
+.bio{
+  margin:clamp(12px, 2.2vh, 18px) 0 0;
+  max-width:31ch;
+  color:var(--muted);
+  font-size:clamp(12.5px, 3.5vw, 14px);
+  line-height:1.62;
+}
+
+/* ---------- 5. Тонкий золотой разделитель ---------- */
+.divider{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width:min(210px, 62%);
+  margin:clamp(16px, 3vh, 28px) 0;
+}
+.divider span{
+  flex:1; height:1px;
+  background:linear-gradient(90deg, transparent, var(--line));
+}
+.divider span:last-child{ background:linear-gradient(90deg, var(--line), transparent); }
+.divider i{
+  width:5px; height:5px; rotate:45deg;
+  background:var(--gold);
+  opacity:.85;
+}
+/* Линии прорисовываются от ромба к краям, ромб проворачивается на месте */
+.divider span{ animation:draw .9s var(--ease) 520ms backwards; transform-origin:right center; }
+.divider span:last-child{ transform-origin:left center; }
+.divider i{ animation:gem 1s var(--ease) 440ms backwards; }
+@keyframes draw{ from{ transform:scaleX(0); } }
+@keyframes gem { from{ transform:scale(0) rotate(-180deg); opacity:0; } }
+
+/* ---------- 6. Главная кнопка ---------- */
+.cta{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width:100%; max-width:340px;
+  min-height:clamp(52px, 7.2vh, 58px);
+  padding:0 22px;
+  position:relative; overflow:hidden;   /* блик не выходит за края кнопки */
+  border:0; border-radius:100px;
+  background:linear-gradient(135deg, var(--gold-soft) 0%, var(--gold) 52%, var(--cta-end) 100%);
+  color:var(--cta-text);
+  text-decoration:none;              /* кнопка — это ссылка <a> на .vcf */
+  font-family:'Inter', sans-serif;
+  font-size:clamp(14px, 4vw, 15.5px);
+  font-weight:500;
+  letter-spacing:.035em;
+  cursor:pointer;
+  box-shadow:0 12px 30px rgba(var(--gold-rgb),.24), 0 2px 6px rgba(0,0,0,.4);
+  transition:transform .18s var(--ease), box-shadow .25s var(--ease), filter .2s var(--ease);
+}
+.cta svg{ width:18px; height:18px; flex:none; position:relative; z-index:1; }
+.cta span{ position:relative; z-index:1; }
+/* Блик пробегает по кнопке раз в несколько секунд */
+.cta::after{
+  content:''; position:absolute; top:0; bottom:0; left:0;
+  width:36%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform:translateX(-180%) skewX(-18deg);
+  animation:shine 5s ease-in-out 1.8s infinite;
+}
+@keyframes shine{
+  0%, 64% { transform:translateX(-180%) skewX(-18deg); }
+  100%    { transform:translateX(360%)  skewX(-18deg); }
+}
+/* Мягкая волна вокруг кнопки: взгляд возвращается к ней сам */
+@keyframes ctaPulse{
+  0%,100%{ box-shadow:0 12px 30px rgba(var(--gold-rgb),.24), 0 2px 6px rgba(0,0,0,.4), 0 0 0 0 rgba(var(--gold-rgb),.38); }
+  60%    { box-shadow:0 14px 34px rgba(var(--gold-rgb),.32), 0 2px 6px rgba(0,0,0,.4), 0 0 0 11px rgba(var(--gold-rgb),0); }
+}
+.cta:active{                       /* тактильный отклик на нажатие */
+  transform:scale(.965);
+  box-shadow:0 6px 16px rgba(var(--gold-rgb),.20);
+  filter:brightness(.97);
+}
+.cta:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
+
+/* ---------- 7. Ряд круглых иконок ----------
+   Размер кнопки вычисляется из ширины ряда и их количества (--n задаётся из JS),
+   поэтому иконки всегда помещаются в одну строку — от 320px и шире. */
+.links{
+  --n:7;                       /* переопределяется в render() */
+  --gap:clamp(6px, 2vw, 12px);
+  display:flex; flex-wrap:nowrap; align-items:center; justify-content:center;
+  gap:var(--gap);
+  margin-top:clamp(18px, 3.2vh, 28px);
+  width:100%;
+}
+.links a{
+  display:grid; place-items:center;
+  flex:0 0 auto;
+  width:min(50px, calc((100% - (var(--n) - 1) * var(--gap)) / var(--n)));
+  aspect-ratio:1;
+  border-radius:50%;
+  border:1px solid var(--surface-line);
+  background:var(--surface);
+  color:var(--icon);
+  text-decoration:none;
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  transition:transform .18s var(--ease), border-color .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+  /* кнопки выскакивают по очереди; --i (номер кнопки) задаёт render().
+     backwards, а не both: после появления :active снова управляет transform */
+  animation:pop .55s var(--ease) calc(640ms + var(--i, 0) * 70ms) backwards;
+}
+@keyframes pop{ from{ opacity:0; transform:translateY(10px) scale(.6); } }
+.links a svg{ width:clamp(17px, 4.6vw, 20px); height:auto; }
+.links a:active{
+  transform:scale(.9);
+  background:rgba(var(--gold-rgb),.14);
+  border-color:var(--gold);
+  color:#fff;
+}
+.links a:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
+@media (hover:hover){
+  .links a:hover{ border-color:var(--gold); background:rgba(var(--gold-rgb),.10); }
+  .cta:hover{ box-shadow:0 16px 36px rgba(var(--gold-rgb),.3); }
+}
+
+/* ---------- 8. Подвал: логотип и слоган ---------- */
+.foot{
+  position:relative; z-index:1;
+  flex:0 0 auto;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding-top:clamp(14px, 2.6vh, 22px);
+  text-align:center;
+}
+.foot .mark{
+  width:34px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--line), transparent);
+  margin-bottom:4px;
+}
+.logo{
+  font-family:'Playfair Display', Georgia, serif;
+  font-weight:500;
+  font-size:clamp(13px, 3.6vw, 15px);
+  letter-spacing:.2em; text-indent:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+.tagline{
+  margin:0;
+  font-family:'Playfair Display', Georgia, serif;
+  font-style:italic;
+  font-size:clamp(11.5px, 3.2vw, 13px);
+  letter-spacing:.02em;
+  color:var(--muted);
+  opacity:.8;
+}
+
+/* ---------- Переключатель языка ---------- */
+.langs{
+  position:absolute; z-index:3;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  right:16px;
+  display:flex; gap:2px;
+  padding:3px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:var(--pill);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.langs button{
+  border:0; background:none; cursor:pointer;
+  padding:5px 9px;
+  border-radius:100px;
+  color:var(--muted);
+  font-family:'Inter', sans-serif;
+  font-size:10px; font-weight:500;
+  letter-spacing:.09em; text-transform:uppercase;
+  transition:color .2s var(--ease), background .2s var(--ease), transform .15s var(--ease);
+}
+.langs button[aria-pressed="true"]{
+  background:rgba(var(--gold-rgb),.16);
+  color:var(--gold);
+}
+.langs button:active{ transform:scale(.92); }
+.langs button:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:2px; }
+
+/* ---------- Переключатель цвета (CONFIG.themes) ----------
+   Зеркально языкам — слева сверху. Кружок = цвет темы, выбранный обведён. */
+.themes{
+  position:absolute; z-index:3;
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  left:16px;
+  display:flex; gap:1px;
+  padding:3px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:var(--pill);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.themes button{
+  display:grid; place-items:center;
+  width:24px; height:24px;
+  padding:0; border:0; border-radius:50%;
+  background:none; cursor:pointer;
+}
+.themes button i{
+  width:13px; height:13px;
+  border-radius:50%;
+  background:var(--sw);
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.35);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.themes button[aria-pressed="true"] i{
+  transform:scale(1.08);
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.35), 0 0 0 2px var(--bg), 0 0 0 3.2px var(--gold);
+}
+.themes button:active i{ transform:scale(.8); }
+.themes button:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:1px; }
+
+/* Смена цвета: новая тема растекается кругом от нажатого кружка
+   (View Transitions; где их нет — цвет меняется мгновенно) */
+::view-transition-old(root), ::view-transition-new(root){ animation:none; mix-blend-mode:normal; }
+
+/* ---------- Стрелка «листайте дальше» ---------- */
+.scroll-hint{
+  display:grid; place-items:center;
+  width:32px; height:32px;
+  margin-top:clamp(6px, 1.2vh, 12px);
+  color:var(--gold); opacity:.7;
+  animation:bob 2.1s ease-in-out infinite;
+}
+.scroll-hint svg{ width:16px; height:16px; }
+@keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(5px); } }
+
+/* ---------- Вторая секция: маршрут с остановками ---------- */
+.routes{
+  position:relative; z-index:1;
+  max-width:520px; margin-inline:auto;
+  padding:clamp(38px, 7vh, 70px) 20px 0;
+}
+.sec-head{ text-align:center; margin-bottom:clamp(24px, 4vh, 38px); }
+.sec-kicker{
+  display:block;
+  color:var(--gold);
+  font-size:clamp(9.5px, 2.7vw, 10.5px);
+  text-transform:uppercase; letter-spacing:.26em; text-indent:.26em;
+  margin-bottom:9px;
+}
+.sec-title{
+  margin:0;
+  font-family:'Playfair Display', Georgia, serif;
+  font-weight:500;
+  font-size:clamp(21px, 5.8vw, 27px);
+  line-height:1.25;
+}
+
+/* Пунктирная нить слева и ромбы-остановки на ней */
+.route{ list-style:none; margin:0; padding:0 0 0 30px; position:relative; }
+.route::before{
+  content:''; position:absolute; left:6px; top:10px; bottom:10px;
+  width:1px;
+  background:repeating-linear-gradient(to bottom, var(--line) 0 5px, transparent 5px 11px);
+}
+.route li{
+  position:relative;
+  margin-bottom:clamp(16px, 2.8vh, 26px);
+  opacity:0; transform:translateY(18px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+.route li:last-child{ margin-bottom:0; }
+.route li.is-in{ opacity:1; transform:none; }
+.route li::before{                 /* точка остановки поверх нити */
+  content:''; position:absolute; left:-28px; top:18px;
+  width:8px; height:8px; rotate:45deg;
+  background:var(--gold);
+  box-shadow:0 0 0 4px var(--bg), 0 0 12px rgba(var(--gold-rgb),.75);
+}
+
+.stop{
+  position:relative; display:block;
+  margin:0;                          /* у figure свой отступ в браузере — снимаем */
+  border-radius:16px; overflow:hidden;
+  border:1px solid var(--surface-line);
+  aspect-ratio:16/10;
+  background:#141416;
+  box-shadow:0 14px 32px rgba(0,0,0,.45);
+}
+.stop img{
+  display:block; width:100%; height:100%;
+  object-fit:cover;
+}
+.stop::after{                      /* затемнение под подписью */
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(6,6,9,.9) 0%, rgba(6,6,9,.3) 42%, transparent 68%);
+}
+.stop b{
+  position:absolute; left:15px; bottom:12px; z-index:1;
+  font-family:'Playfair Display', Georgia, serif;
+  font-weight:500;
+  font-size:clamp(16px, 4.4vw, 19px);
+  letter-spacing:.01em;
+}
+.stop small{
+  position:absolute; right:15px; bottom:16px; z-index:1;
+  color:var(--gold);
+  font-size:clamp(9px, 2.5vw, 10px);
+  text-transform:uppercase; letter-spacing:.18em;
+}
+
+/* Финальная карточка маршрута: шире, подпись по центру, точка на нити крупнее.
+   Это конец нити — дальше уже весь мир. */
+.route li.finale{ margin-top:clamp(20px, 3.4vh, 30px); }
+.route li.finale::before{
+  width:11px; height:11px;
+  top:22px; left:-29.5px;
+  box-shadow:0 0 0 4px var(--bg), 0 0 18px rgba(var(--gold-rgb),.9);
+}
+.finale .stop{ aspect-ratio:16/9; border-color:var(--line); }
+.finale .stop::after{
+  background:linear-gradient(to top, rgba(6,6,9,.86) 0%, rgba(6,6,9,.45) 55%, rgba(6,6,9,.2) 100%);
+}
+.finale .stop b{
+  left:0; right:0; bottom:auto; top:50%;
+  translate:0 -50%;
+  text-align:center;
+  font-size:clamp(19px, 5.4vw, 24px);
+  letter-spacing:.02em;
+  text-shadow:0 2px 18px rgba(0,0,0,.6);
+}
+
+/* ---------- Кнопка «поделиться» ---------- */
+.share{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  margin-top:clamp(10px, 1.8vh, 15px);
+  padding:12px 22px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+  font-family:'Inter', sans-serif;
+  font-size:clamp(12.5px, 3.4vw, 13.5px);
+  text-decoration:none; cursor:pointer;
+  transition:transform .18s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
+}
+.share svg{ width:16px; height:16px; flex:none; }
+.share:active{ transform:scale(.96); border-color:var(--gold); color:var(--gold-soft); }
+.share:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
+@media (hover:hover){ .share:hover{ border-color:var(--gold); } }
+
+/* ---------- Закрывающий блок ---------- */
+.outro{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center;
+  max-width:520px; margin-inline:auto;
+  padding:clamp(32px, 6vh, 58px) 20px calc(env(safe-area-inset-bottom, 0px) + 32px);
+  text-align:center;
+}
+.outro-text{
+  margin:0 0 clamp(16px, 2.6vh, 24px);
+  max-width:28ch;
+  color:var(--muted);
+  font-size:clamp(12.5px, 3.5vw, 14px);
+  line-height:1.6;
+}
+
+/* ---------- Подпись-ссылка «хотите такую же визитку» ---------- */
+.promo{
+  display:inline-flex; align-items:center; gap:7px;
+  margin-top:clamp(8px, 1.4vh, 13px);
+  padding:7px 15px;
+  border:1px solid var(--surface-line);
+  border-radius:100px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-size:clamp(10.5px, 2.9vw, 11.5px);
+  letter-spacing:.02em;
+  text-decoration:none;
+  transition:transform .18s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
+}
+.promo svg{ width:12px; height:12px; flex:none; opacity:.8; }
+.promo:active{ transform:scale(.95); border-color:var(--gold); color:var(--gold-soft); }
+.promo:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
+@media (hover:hover){ .promo:hover{ border-color:var(--gold); color:var(--gold-soft); } }
+
+/* ---------- Уведомление (тост) ---------- */
+.toast{
+  position:fixed; left:50%; translate:-50% 0;
+  bottom:calc(env(safe-area-inset-bottom, 0px) + 88px);   /* выше подвала, чтобы не перекрывать логотип */
+  z-index:20;
+  max-width:min(360px, calc(100vw - 40px));
+  padding:11px 18px;
+  border-radius:100px;
+  border:1px solid var(--surface-line);
+  background:var(--toast-bg);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  box-shadow:0 12px 34px rgba(0,0,0,.5);
+  color:var(--text);
+  font-size:12.5px; line-height:1.45; text-align:center;
+  opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
+}
+.toast.is-visible{ opacity:1; visibility:visible; transform:translateY(0); }
+
+/* ---------- Плавное появление при загрузке ---------- */
+.reveal{
+  opacity:0;
+  animation:rise .85s var(--ease) forwards;
+  animation-delay:var(--d, 0ms);
+}
+@keyframes rise{
+  from{ opacity:0; transform:translateY(16px); }
+  to  { opacity:1; transform:translateY(0); }
+}
+/* Фото появляется мягче — с лёгким приближением */
+.avatar.reveal{ animation-name:riseScale; animation-duration:1.1s; }
+@keyframes riseScale{
+  from{ opacity:0; transform:translateY(10px) scale(.9); }
+  to  { opacity:1; transform:translateY(0) scale(1); }
+}
+/* У главной кнопки к появлению добавляется волна (одно правило на оба,
+   иначе .reveal перекрыл бы анимацию кнопки) */
+.cta.reveal{
+  animation:rise .85s var(--ease) var(--d, 0ms) forwards, ctaPulse 3.2s ease-in-out 1.6s infinite;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  .reveal, .cta.reveal{ animation:none; opacity:1; }
+  .glow, .avatar::after, .avatar__ring::before, .cta::after,
+  .divider span, .divider i, .links a{ animation:none !important; }
+  .cta::after{ display:none; }
+  .scroll-hint{ animation:none; }
+  .route li{ opacity:1; transform:none; }   /* остановки видны без прокрутки */
+  *{ transition-duration:.01ms !important; }
+}
+
+/* Низкие экраны (iPhone SE и подобные) — ужимаем вертикаль */
+@media (max-height:680px){
+  .avatar{ width:clamp(100px, 27vw, 120px); margin-bottom:14px; }
+  .bio{ font-size:12.5px; }
+  .divider{ margin:14px 0; }
+  .links{ margin-top:16px; }
+}
+</style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="glow" aria-hidden="true"></div>
+
+    <!-- Переключатель цвета (CONFIG.themes) -->
+    <div class="themes" id="themes" role="group"></div>
+
+    <!-- Переключатель языка (CONFIG.i18n) -->
+    <div class="langs" id="langs" role="group"></div>
+
+    <section class="hero">
+      <!-- 1. Фото -->
+      <div class="avatar reveal" style="--d:60ms">
+        <div class="avatar__ring"><img id="photo" alt="" decoding="async"></div>
+      </div>
+
+      <!-- 2-4. Имя, должность, био -->
+      <h1 class="name reveal" id="name" style="--d:180ms"></h1>
+      <p class="role reveal" id="role" style="--d:260ms"></p>
+      <p class="bio reveal"  id="bio"  style="--d:340ms"></p>
+
+      <!-- 5. Разделитель -->
+      <div class="divider reveal" style="--d:420ms" aria-hidden="true"><span></span><i></i><span></span></div>
+
+      <!-- 6. Главная кнопка. Что именно на ней — задаётся в CONFIG.cta:
+           иконка, подпись и ссылка. Содержимое подставляется из конфига. -->
+      <a class="cta reveal" id="ctaBtn" href="#" style="--d:500ms"></a>
+
+      <!-- 7. Круглые иконки-ссылки (генерируются из CONFIG.actions) -->
+      <nav class="links reveal" id="links" style="--d:580ms" aria-label="Контакты"></nav>
+    </section>
+
+    <!-- 8. Подвал -->
+    <footer class="foot reveal" style="--d:680ms">
+      <div class="mark" aria-hidden="true"></div>
+      <div class="logo" id="brandName"></div>
+      <p class="tagline" id="tagline"></p>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================================
+   КОНФИГУРАЦИЯ — единственное место, которое нужно менять под нового клиента.
+   Всё ниже (разметка, vCard, иконки) собирается из этого объекта.
+   ========================================================================== */
+const CONFIG = {
+
+  /* ==========================================================================
+     ЯЗЫКИ. Всё, что человек читает на странице, живёт здесь.
+     Файл контакта (.vcf) намеренно НЕ переводится: он один на все языки,
+     иначе у одного человека в телефоне оказались бы три разных Нозимы.
+     Добавить язык — добавить блок в langs и код в order.
+     ========================================================================== */
+  i18n: {
+    fallback: 'ru',
+    order: ['ru', 'uz', 'en'],
+    langs: {
+
+      ru: {
+        label:'RU', groupLabel:'Язык',
+        name:'Abdulboriy Shukhratov',
+        role:'Social Media Manager & Videographer',
+        bio:'Снимаю видео и веду соцсети, которые работают на ваш бизнес.',
+        ctaLabel:'Написать в Telegram',
+        whatsappText:'Здравствуйте! Я по вашей визитке — хочу обсудить проект.',
+        actions:{ savecontact:'Сохранить контакт', phone:'Позвонить', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Сайт' }, routesTitle:'Куда мы отправляем',
+        themeGroup:'Цвет', themes:{ gold:'Золото', platinum:'Платина', emerald:'Изумруд', sapphire:'Сапфир', pearl:'Жемчуг' },
+        toastInApp:'Встроенный браузер блокирует сохранение. Откройте страницу в Safari или Chrome.',
+        toastFail:'Не удалось открыть контакт. Откройте страницу в Safari или Chrome и повторите.'
+      },
+
+      uz: {
+        label:'UZ', groupLabel:'Til',
+        name:'Abdulboriy Shukhratov',
+        role:'Social Media Manager & Videographer',
+        bio:'Biznesingiz uchun ishlaydigan videolar suratga olaman va ijtimoiy tarmoqlarni yuritaman.',
+        ctaLabel:'Telegramda yozish',
+        whatsappText:'Assalomu alaykum! Vizitkangiz orqali yozyapman — loyiha haqida gaplashmoqchiman.',
+        actions:{ savecontact:'Kontaktni saqlash', phone:'Qoʻngʻiroq qilish', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Sayt' }, routesTitle:'Sizni qayerlarga yuboramiz',
+        themeGroup:'Rang', themes:{ gold:'Oltin', platinum:'Platina', emerald:'Zumrad', sapphire:'Sapfir', pearl:'Marvarid' },
+        toastInApp:'Ichki brauzer saqlashni bloklaydi. Sahifani Safari yoki Chromeda oching.',
+        toastFail:'Kontaktni ochib boʻlmadi. Sahifani Safari yoki Chromeda oching va qayta urinib koʻring.'
+      },
+
+      en: {
+        label:'EN', groupLabel:'Language',
+        name:'Abdulboriy Shukhratov',
+        role:'Social Media Manager & Videographer',
+        bio:'I shoot videos and run social media that work for your business.',
+        ctaLabel:'Message on Telegram',
+        whatsappText:'Hello! I found your card — I would like to discuss a project.',
+        actions:{ savecontact:'Save contact', phone:'Call', whatsapp:'WhatsApp', instagram:'Instagram', email:'Email', website:'Website' }, routesTitle:'Where we send you',
+        themeGroup:'Color', themes:{ gold:'Gold', platinum:'Platinum', emerald:'Emerald', sapphire:'Sapphire', pearl:'Pearl' },
+        toastInApp:'This in-app browser blocks saving. Open the page in Safari or Chrome.',
+        toastFail:'Could not open the contact. Open the page in Safari or Chrome and try again.'
+      }
+    }
+  },
+
+  /* --- Цвета. Посетитель выбирает тему кружками слева сверху, выбор
+         запоминается. Первая тема — по умолчанию. Названия тем — в i18n.
+         gold/goldSoft/goldDeep — акцент темы (для не-золотых тем тоже).
+         У каждой темы свой файл контакта с фото в рамке её цвета:
+         первая — contacts.vcfUrl, остальные — то же имя с -id на конце
+         (javokhir-ergashev-emerald.vcf). Собирает их theme-vcards.py.
+         Каждая тема — одной строкой: её так читает theme-vcards.py. --- */
+  themes: [
+    { id:'gold',     bg:'#0B0B0C', bg2:'#141416', bg3:'#08080A', glowTop:'#1A1A1D', gold:'#C9A227', goldSoft:'#E8D9A8', goldDeep:'#8B6F1E', ctaEnd:'#B08D1C', ctaText:'#14110A', text:'#F4F1EA', muted:'#9A948A' },
+    { id:'platinum', bg:'#0A0B0D', bg2:'#14161A', bg3:'#07080A', glowTop:'#1B1E23', gold:'#B7BEC9', goldSoft:'#EEF1F5', goldDeep:'#69707B', ctaEnd:'#8E96A2', ctaText:'#111317', text:'#F2F4F7', muted:'#979CA6' },
+    { id:'emerald',  bg:'#07100C', bg2:'#0D1914', bg3:'#050B08', glowTop:'#13241C', gold:'#3CB98A', goldSoft:'#BFEBD8', goldDeep:'#1B6A4D', ctaEnd:'#25966C', ctaText:'#04140D', text:'#EEF6F2', muted:'#8FA69C' },
+    { id:'sapphire', bg:'#080B13', bg2:'#0F1422', bg3:'#05070D', glowTop:'#161D31', gold:'#5C8FF0', goldSoft:'#CFDDFB', goldDeep:'#2A4C9C', ctaEnd:'#3F72D6', ctaText:'#060E1F', text:'#F1F4FA', muted:'#929CB2' },
+    { id:'pearl',    scheme:'light', bg:'#F4EFE6', bg2:'#FBF8F2', bg3:'#EDE6DA', glowTop:'#FFFFFF', gold:'#A8841E', goldSoft:'#E3CD8A', goldDeep:'#7A5E12', ctaEnd:'#8F6F14', ctaText:'#14110A', icon:'#8A6A14', text:'#1D1A15', muted:'#6F675B' }
+  ],
+
+  /* --- Персона --- */
+  person: {
+    displayName:   'Abdulboriy Shukhratov', // как на странице
+    firstName:     'Abdulboriy',            // латиницей — для карточки контакта
+    lastName:      'Shukhratov',
+    phoneticFirst: 'Абдулборий',            // кириллица внутри контакта
+    phoneticLast:  'Шухратов',
+    title:         'Social Media Manager & Videographer',   // должность внутри контакта
+    company:       ''                       // своей компании нет — строки ORG в контакте не будет
+    // Имя, должность и био НА СТРАНИЦЕ берутся из i18n — их правьте там
+  },
+
+  /* --- Бренд --- */
+  brand: {
+    name:    'Made by Boriy',                // личный бренд — как в Instagram @madebyboriy
+    tagline: ''                          // слогана нет — строка не рисуется
+  },
+
+  /* --- Контактные данные (используются и на странице, и в vCard) --- */
+  contacts: {
+    phone:       '+998999118484',           // E.164 — для tel: и vCard
+    phonePretty: '+998 99 911 84 84',
+    email:       '',                        // почты нет — иконки и строки в контакте не будет
+    website:     '',                        // сайта нет — иконки и строки в контакте не будет
+    telegram:    'https://t.me/shukhratov_ab',
+    whatsapp:    'https://wa.me/998999118484',
+    // Текст, который окажется уже набранным в чате. Человеку остаётся нажать
+    // «отправить» — и его номер сразу у владельца визитки.
+    whatsappText:'Здравствуйте! Я по вашей визитке — хочу обсудить проект.',
+    instagram:   'https://instagram.com/madebyboriy',
+    maps:        '',                        // адрес не показываем — ни на странице, ни в контакте
+    // Готовый файл контакта рядом с index.html. Кнопка ведёт прямо на него —
+    // iOS открывает карточку контакта. Пересобрать после правки CONFIG:
+    // открыть страницу с ?export в адресе и нажать кнопку, файл скачается;
+    // положить его сюда и запустить  python theme-vcards.py bori  —
+    // он разложит фото в цветах тем по файлам всех тем.
+    vcfUrl:      'abdulboriy-shukhratov.vcf',
+    address: {
+      street:  '',
+      city:    '',
+      region:  '',
+      zip:     '',
+      country: ''
+    }
+  },
+
+  /* --- Главная кнопка: самое заметное действие на странице.
+         Ставка на переписку, а не на сохранение контакта: человек пишет сразу,
+         и его контакт оказывается у владельца визитки, а не наоборот.
+         Telegram не поддерживает предзаполненный текст в личных чатах
+         (параметр ?text= работает только у ботов), поэтому чат открывается пустым. --- */
+  cta: {
+    id:   'telegram',                       // иконка берётся из ICONS по этому id
+    href: c => c.telegram                   // подпись — в словарях i18n
+  },
+
+  /* --- Служебное. Все видимые тексты живут в i18n выше. --- */
+  ui: {
+    vcfFileName: 'Abdulboriy_Shukhratov'    // имя файла контакта без расширения
+  },
+
+  /* --- Фото: page — аватар на странице, vcard — облегчённая копия для контакта --- */
+  photo: {
+    page:  'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCALQAtADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5Kp1FFBIUUUUAFLSUtABRRRQAUUU6gAooooAKKKKACnUUUAFFFFABRRRQAUtFFABRRRQAUUU6gBtOoooAKKKWgBKKWigAooooAKKKdQA2inUUANop1FABRRRQAUUUUAFFFFABRRRQAUUUUANop1FADaKdRQA2inU2gAooooASilooASilpKACm06igBtFOptABRRRQAUlLRQAlFFFABRRRQAU2nUUANooooAKKKKAG0U6m0AFFFFABSUtJQAUUUUAFNp1FABRRRQAUUUtABRRRQAUUUUAOooooAKKKKACnUUUAFFFFABRRS0AJS0UUAFFFFABTqKKACiiigAopaKACiiigAop1FADadRRQAUUUUAFFOooAbRTqKAG0U6igAooooAKKKKACiiigAptOooAbRTqKAG0U6igBtFFFABTadRQA2inUUANooooAKSlooASiiigAptOooAbRRRQAUlLRQAlFLSUAFFFFABTadRQA2iiigAooooAbRRRQAUUUUAJRS0lABRRRQAUUUUALRRRQAUUUUAFOoooAKKKKACnU2nUAFFFFABRRS0AFFFFABRRRQAU6iigAoopaACiiigAoop1ABRRRQAUUU6gBtOoooAKKKKdgCiilo2ASilopAJRS0UwEopaKLAJRS0UWASiloosAlFLRRYBKKWigBKKWkpAFFFFABTadRQA2inU2gAooooAbRTqbQAUUUUAJRS0lABTadRQA2iiigAooooASilpKACiiigAptOptABRRRQAU2nUUANooooAKKKKAEooooAKWiigAooooAKdTadQAUUUUAFFFOoAKKKKACiiigBaKKKACiinUAFFFFABRRS0AFFFFABTqKKACiiigAp1FFABRRRT2AKKWikAUUUU7AFFFFMAop1FADaKdRQA2inUUANop1FADaKdRQA2inUUANop1FADaKKKACiiikAlFLRSASiiigAptOooAbRRRQAU2nUUANooooASilpKACiiigBtFOptABRRRQAlFFFABRRRQA2inU2gAooooAKbTqbQAUUUUAFJS0UAFFFFABRRTqACiiigAooooAdRRRQAUUUUAFLRRQAUUUUAFOoooAKKKWgAooooAKdRRQAUUU6gAooooAKKKWgAooopgFFFOpgNp1FFABRRRQAUUUUAFFLRQAlFLRQAlFLRQAlFLRQAlFLRQAlFLSUAFFFFABTadRQA2inU2gAooopAJRS0lIAooooAbRTqbQAU2nUUANooooASilpKACm06igBtFFFABSUtFACUUUUAFFFFADaKKKACiiigBtFOptABRRRQAUUUUAFOoooAKKKKACnUUUAFFFFABS0lLQAUUUUAFOoooAKKKWgAooooAKdRRQAUUU6gAooooAKWiinYAooopgFOoooAKKKKACilooAKKKKACiiigAoop1ADaKdRQA2inUUANop1FADaKdRQA2iiigAooooASilooASiiigAptOooAbRRRQAUlLRSsAlFFFIBtFOptABTadRQA2iiigBKKWkoAKbTqKAG0UUUAFJS0lABRRRQAU2nUUANooooAKbTqKAG0UUUAFFFOoAKKKKACiinUAFFFFABRRS0AFFFFABTqbTqACiiloAKKKKACnUUUAFFFOoAKKKKACloopgFFFOpgFFFFABRRS0AFFFFABRRTqAG06iigAooooAKKKKACinUUANop1FADaKdRQA2iiigAooooAKbTqKAG0U6m0AFFFFACUUtJQAUUUUANop1NoAKSlopAJRRRSAbRTqbQAU2nUUANooooASilpKACm06m0AFFFFACUUtJQAUUUUANop1NoAKKKKAG0U6m0AFOoooAKKKKACnUUUAFFFFABS0UUAFFFOoAKKKKACloooAKdTadQAUUU6gAooooAKWiimAUUU6mAUUUUAFLRRQAUUUUAFOoooAKKKKACinUUAFFFFABRRRQAUUUUAFFLRQAlFFFABRRRQAUUUUANop1FADaKKKACm06igBtFFFABSUtFACUUUUANop1NoAKSlopMBKKKKQDaKdTaACm06m0AFJS0UAJRRRQA2inU2gApKWigBKKKKACm06igBtFFFABTadRQAUUUUAFFFOoAKKKKACiiloAKKKKACnUUUAFLSUtABRRTqACiiigAp1FFABS0lLQAUUU6qAKKKKACloooAKKKdQAUUUUAFFOooAKKKKACiiloASloooAKKKKACiiigAooooAKKKKACiiigApKWigBKKWkoAKKKKAG0U6m0AFFFFADaKdTaACkpaKAEooooAbRTqbQAUlLSVIBTadRQA2iiigBtFOptABSUtJQAU2nUUANooooASilpKACiiigBtFOptABRRRQAUUUUAFOptOoAKKKKACloooAKKKKAHUUUUALRRRQAU6iigAp1Np1ABRRS0AFFFFUAU6iigApaSloAKKKdQAUUUUAFOoooAKKKWgBKWiigAoop1ADaKdRQAUUUUAFFFFABRRRQAUUUUAFFFFADaKdRQA2inU2gApKWigBKKKKACm06igBtFFFADaKdTaACkpaKAEooooAbRRRQAlFLSVIBTadTaACm06igBtFFFACUUUUANooooAKSlooASiiigAptOptABRRRQAUUUUAOooooAKKKKAFooooAKdTadQAUtJS0AFFFOoAKKKKAHUUUUAFLRRTAKdTadTAKKKWgAooooAKdRRQAU6iigAoopaACiiigAop1FABRRRQAUUtFACUtFFABRRRQAUUUUAFFFFABSUtFACUUtFACUUUUANop1NoAKKKKAEopaSgAptOptABRRRQA2iiigBKKWkoAKbTqbQAUlLRSYCUUUUgG0UUUANop1NoASilpKACm06m0AFFFFACUUUUAFFFFADaKKKACiinUAFFFFABS0lLQAUUUUAOooooAKWiigAp1Np1ABTqbTqACiiloAKKKKoB1FFFABS0UUAFOptOoAKKKdQAUUUUALRRRQAU6iigAooooAKWiigAoop1ADaKdRQAUUUUAFFFFABRRRQA2inUUANop1NoAKSlooASiiigAptOptABSUtFACUUUUANop1NoAKbTqbQAUlLRQAlFFFADaKKKAEopaSpAKbTqbQAU2nU2gApKWigBKKKKAG0UUUAFJS0lABRRRQA2inU2gAp1Np1ABRRRQAUtJS0AFFFFADqKKKAFooooAdRRRQAU6iigApaSlpgFOptOpgFFFLQAUUUUAOooooAKdRRQAUtFFABRRTqACiiigApaKKACiinUAFFFFABRTqKAG06iigAooooAKbTqKAG0U6igBtFFFADaKdTaACkpaKAEooooAbRTqbQAUlLSUAFFFFADaKKKAG0UUUAJRS0lABTadTaACkpaSkwCm06ikA2iiigBtFFFACUUUUANooooAKSlpKACiiigAptOptABTqbTqACiiigBaKKKACnU2nUAFFFLQAUUUUAOooooAdRRRQAtFFFMAp1FFMApaSloAKdTadQAUUU6gAooooAWiiigB1FFFABS0UUAFFFOoAKKKKACnUUUAFFFLQAlFLRQAUUUUAJRS0UAJRS0lABTadRQA2iiigBtFOptABSUtFACUUUUANooooASiiigBtFOptABTadTaACkpaSgAptOooAbRRRSASiiikA2iiigBtFFFACUUtJQAU2nU2gAooooASiiigAptOptABTqKKACiiigBaKKKACnU2nUAFLSUtABTqbTqACiiigB1FFFAC0UUVQDqKKKAFooooAKdRRQAU6m06gApaSloAKdTadQAUUUUALRRRQA6iiigAp1FFABRRS0AFFFFABRTqKAG0U6igBtFOooAbRRRQAlFLSUAFNp1FADaKKKAG0UUUAJRRRQA2inU2gApKWkoAKbTqbQAU2nUUANooooASiiigBtFFFACUUUVIDaKKKAG0U6m0AFJS0lABTadTaACiiigBKKKKACm06igAooooAKKKKAFooooAKdTadQAUtJS0AFOptOoAKdTadQAUUUUALRRRVAOooooAWiiigB1FFFADqKKKAClpKWgAp1Np1ABS0lLQAUUU6gAoop1ABRRRQAtFFFABTqKKACiiloASilooASilpKACm06igBtFFFACUUUUANooooAbRTqbQAUlLSUAFNp1NoAKSlooASm06igBtFFFADaKKKAEooooAbRRRQAlFFFSAU2nU2gAptOptABSUtJQAU2nU2gAooooASiiigAooooAKKKKACiiigBaKKKACnU2nUAFLSUtABTqbTqACnU2nUAFLSUtABRRRVAOooooAWiiigB1FFFADqKKKAFooooAKdTadQAUtJS0AFOpteufs/fCBPiXHql3f6hcadY2RSJHiQMZZW5I59AB/30KmUlFXY0rnktOr6k1v9ljTYNHvJtM8SX9xfRwO1tFJCgWSQD5VJHqQBn3r5bZSpKuCCDggjBBpRmpbDaaClpKWrJCiiigB1FFFAC0UUUAFFOooAbRRRQAlFFFADaKKKAEoroPB3gvxT4wuzB4c0W6vypAd0XbGh/2nbCr+Jr27wp+yxqtxEk3ibxJb2JPJt7OEzMB7uxAB+gYVEpxjuylFs+cabX2ton7Nnw1sAv2yHU9VYdftN2UBP0jCfzrqE+EnwusoMnwfpCxoOXmTcAPcsT+tZuvEfIz4BptfeV34O+CCOI7nS/B0LHgAyRIf5iof+FR/BfWDtttC0qYsDj7JfSKf/HJKPbrsPkPhOkr6+8U/st+E7yN5PD2s6lpUx5VJttxEPw+Vvx3GvCfiP8FvHfgkSXN1p39o6amSb2wzIij/AGlxuT6kY96uNWMiXFo83ptOptaEhRWv4M0ZvEXi/SNBRyn9oXsNsXUZKB3ALfgCTXt3xj/Z/wBF8C/DvUvE9t4iv7ua0MKpDJEiq5eVE6jngMT+FQ5pOzGk2fPNFFFWIbRRRQA2iiigBKKKKAG0UUUAFJS0lJgFNp1NpAFNp1NoAKSlpKACm06m0AFFFFACUUUUAFFFFABRRRQAUUUUALRRRQAU6m06gApaSloAKdTadQAU6m06gApaSlpoAooopgOooooAWiiigB1FFFADqKKKAFooooAKdTadQAUtJS0AFfoF8BPCn/CHfCzSNLli8u8lj+13gIwf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/BHg6Oa1sLpdf1dQVW2s3BjRvR5eVH0G4+3evkbxv8UPHfjHemu+I7yW3braxN5UGPTYmAfxya4yqjQtuJz7HYfE34j+KfiHqgu9fvswxsTbWcI2wQA/3Vz1/wBokn36CuPoordJLREXuFNoooEFFFFABTaKKACiikoAKKKKACm0UUAFFFFACUUUUAFFFFABTaKKACiiigAptFFABRRRQAUUlLQAUUUUAOoptOoAKKKKACnU2nUAFFFFABS0lFAC0UUUAFOptFADqKKKAFopKWgAooooAdRTadQAU6m0UAOoptOoAKKKKAFopKKYC0UUUwCnU2igB1FNooAdRTaKAHUU2nUAFFFFABRRTaAHUU2igB1FNooAdTaKKACiiigAopKKQC0lFFIAooptADqbRRQAUUU2gAooooAKKKSgAooooAKbRRQAUUUUAFJRRQAUUUUAFNp1NoAKKKKACiim0AFFFFABRRSUAFLSUUALRRRQAUUUUAOooooAKKKKAHUU2nUAFFFFABS0lFAC0UUUAFOptFADqKKKAClpKKAFooooAdRTaKAHUUUUAFOptFADqKbTqACiiigBaKSincBaKSigBaKSigBaKKKYBRRRQAUUUUAFFFJSAWikoouAtFJRRcAooopAFFFNoAdTaKKACiiigAoptFABRRRQAUlFFABRRRQAU2iigAooooAKSiigAooooAKKKbQAUUUUAFFFNoAKKKKACiiigApKKKACiiigApaSigBaKKKACnU2igB1FFFABRRRQA6im06gAooooAKWkooAWiiigAooooAdRTadQAUtJRQAtFJS0AFFFFADqKbRQA6iiigAooooAdRTaKAHUU2igB1FFFABRRRQAUUUUAFFFFABRRTaAHUU2igB1FNooAKKKKACiiigAoptFABRRRQAUUUlAC0lFFABRRTaACiiigAooooAKSiigAooooAKKKbQAUUUUAFFFFABTaKKACiiigApKKKACiiigAoptOoAKKKKAFopKWgAooooAKdTaKAHUUUUAFFFFADqKbTqACiiigApaSigBaKSloAKKKKAHUU2igB1FFFABS0lFAC0UlLQAUUUUAFOptFADqKbRQA6im06gAooooAKKKKACiiigAooooAKKKKACiim0AOoptFADqbRRQAUUUUAFFFJQAtJRRQAUUUUAFFNooAKKKKACiikoAKKKKACiiigAooptABRRRQAUUUUAFNoooAKKKKACiikoAKKKKACiim0AFOptFADqKKKACiiigBaKSloAKKKKACnU2igB1FFFABRRRQA6im06gAooooAKKKKAFopKKAFooooAKKKKAHUU2igB1FFFABRRRQAtFJRQAtFJRQAtFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRSUUALRSUUAFFFFABRRRQAUU2igAooooAKKKKACikooAKKKKACiiigAoptFABRRRQAUUUUAFNoooAKKKKACiikoAKKKKACiiigAptFFABRRRQAU6m0UAOooooAKKKKAFopKWgAooooAKdTaKAHUUUUAFFFFABTqbRQA6iiigAooooAKWkooAWikpaACiiigAooooAKdTaKAHUU2igB1FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUU2gB1FNooAdTaKKACiiigAooooAKKKSgAooooAKKKKACiiigAptFFABRRRQAUUUUAFNoooAKKKKACiikoAKKKKACiiigAptFFABRRRQAUUlLQAUUUUAFOptFADqKKKACiiigBaKSloAKKKKACnU2igB1FNp1ABRRRQAUUUUAOoptOoAKKKKACiiigAooooAWikooAWikpaACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKSgBaKSigAooooAKKKKACiiigAoptFABRRRQAUUUUAFFFNoAKKKKACiiigAoopKACiiigAooooAKbRRQAUUUUAFFFJQAUUUUALRSUtABRRRQAU6m0UAOooooAKKKKAFopKWgAooooAKKKKAHUU2igB1FFFABRRRQAU6m0UAOoptFADqKKKACiiigAooooAKKKKAFopKKAFopKKAFopKKAFopKKAFopKKAFopKKAFopKKAFopKKAFopKKACiiigAooooAKKKKACiiigAoptFADqbRRQAUUUUAFFFFABRTaKACiiigAooooAKKSigAooooAKKKKACm0UUAFFFFABRRSUAFFFFABRRRQAUUUUALRSUtABRRRQAU6m0UAOooooAKKKKAClpKKAFooooAKKKKACnU2igB1FNp1ABRRRQAUUUUAFFFFADqKbRQA6im0UAOooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACim0UAOoptFABRRRQAUUUUAFFFFABRRTaACiiigAooooAKKKKACkoooAKKKKACiiigAptFFABRRRQAUUUlABRRRQAUUUUANp1NooAdRRRQAUUUUALRSUtABRRRQAU6m0UAOoptOoAKKKKACiiigBaKSloAKKKKACiiigAooooAdRTaKAHUUUUAFFFFABRRRQAUUUUAFFFFADqKbRQA6im0UAOoptFADqKbRQA6im0UAOoptFADqKbRQAUUUUAFFFFABRRRQAUUUUAFFFFABRTaKAHU2iigAooooAKKKKACikooAKKKKACiiigAooptABRRRQAUUUUAFFFJQAUUUUAFFFFABTaKKACiiigAp1NooAdRRRQAUUUUALRSUtABRRRQAUUUUAOoptFADqKKKACiiigApaSigBaKSigBaKKKACiiigAooooAKdTaKAHUU2igB1FNp1ABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRTaAHUU2igB1NoooAKKKKACiiigAooooAKKKSgBaSiigAooooAKKKKACim0UAFFFFABRRRQAUUlFABRRRQAUUUUAFNoooAKKKKACim06gAooooAKdTaKAHUUUUAFFFFABS0lFAC0UUUAFFFFABRRRQA6im06gAooooAKKKKACiiigBaKSigBaKSloAKKKKACiiigAooooAKKKKACiiigAooooAdRTaKAHUU2igB1FNooAKKKKACiiigAooooAKKKKACiiigAooooAKKKSgBaKSigAooooAKKKKACiiigAooptABRRRQAUUUUAFFFFABSUUUAFFFFABRRRQAU2iigAooooAKKKbQAUUUUAOoptOoAKKKKACnU2igB1FNp1ABRRRQAUUUUALRSUUALRRRQAUUUUAFOptFADqKbRQA6iiigAooooAKKKKACiiigBaKSigBaKSigBaKSloAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiikoAWikooAWikooAKKKKACiiigAooooAKKKKACim0UAOptFFABRRRQAUUUUAFFJRQAUUUUAFFFFABRRTaACiiigAooooAKKKbQAUUUUAFFFFABRRRQA6im06gAooooAKKKKAHUU2igB1FFFABRRRQAUtJRQAtFJS0AFFFFABRRRQAUUUUAOoptFADqKbRQA6iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiim0AOoptFABRRRQAUUUUAFFFFABRRSUALSUUUAFFFFABRRRQAUU2igAooooAKKKKACim0UAFFFFABRRRQAlLSUUALRRRQAUUUUAFOptFADqKKKACiiigAooooAdRTadQAUUUUAFFFFABRRRQAtFJRQAtFFFABRRRQAUUUUAFFFFABTqbRQA6im0UAOoptFADqKbRQA6iiigAooooAKKKKACiiigAooooAKKbRQA6im0UAOoptFADqbRRQAUUUUAFFFFABRRRQAUUUUAFFJRQAUUUUAFFFFABRRRQAUUU2gAooooAKKKKACiim0AOptFFABRRRQAUUUUAFJRRQB//9k=',
+    vcard: '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAFAAUADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDw+iiloEFFFKKACiiloABRRRQAUtFFABS0UYoAKMUuKMUAFFLiigAopcUYoASilooASilooASilxRigBtFLRigBuKKXFFACUlLiigBKSlooASg0UUAJRS0lACUUppKAEopaSgApaKKACloooAKWiigApaKBQAYpaKWgAopaKACjFLRQAUUtFABRS4opgJRS0UAJRS0UAJRiloxQA2ilopANxRS0UANopaKAG0mKdSUAJSUpooASkpaKAEpKWigBKSlooAKWkpaAClpBS0AFLSUtABS0UtABRRS0AFLRS0AGKKMUtMAopcUUAJiloxS4oASilooASilooASkxTqTFACUUtGKAG0YpaTFACUlOpKQDaKWkoASkp1JQAlJS0lABSUtIaACkpaSgBaKKKAFoopaAClpKWgBRRRS0AFLRSigApaKKYBS0UtACUtGKWgBMUtFLQAlFLRQAlFLRQAlJinUlACUlOpKAEpKdSUAJSUtFADaSnGkpANoNLSUAJSUtJQAlFLSUAJRRRQAUtJS0AFLSCloAUUtJS0ALSikpaAClopaYBS0UUALRRS0AFLRS4oASlopcUAJRS0UAJRS0UAJSU7FJQAlJS4ooAbRS0lACUlONJQA2kp1JQAhpKWkpAIaQ0tJQAlJS0hoAKSlpKAAUtIKWgBaBRS0AApaQU4UAApaKWgApaQU4UwClooFAC0tIKWgBaKKWgApaKKACilooASilooASkpaKAG0GlpKAEpKWkoASkpTRQA2kpxppoASkNOpKQDaQ04000AIaKWkoASkNLSGgBaKKKAFpaSloAWlpKWgBaWkpaAFpaSlpgLS0lLQAtLSUtAC0tJS0AFLRS0AFFLRQAlFLRQA2kp1JQAlJS0lACUlLSUAJSUtJQAlJS0lACUlLSUgEpKWkoASkpaSgBKKKKACiiigBaWkpaAFpaSloAWlpBS0wFpaSloAUUtIKUUALS0lLQBJFG80qRRIzyOwVVUZLE9ABVzUNG1TSPL/tLTrqz8zOzz4ym7HXGfrXX/AAh0L+1vGiXkiZt9NTzzkcGQ8IPzyfwr1P4qaEdc8EXMka7rmwP2qP1IHDj/AL5yfwqHKzsNLQ+cBS0g5pasQtLSCloAKSlpKAEqa0srvUJ/IsrWe5l/uQxlz+ld78PPhs/icDVNUMkOkq2EVeHuCOuD2X379q9Y1vV9D+HPhvzYLKKFCfLt7WABTM/oT+pJzUOdnZDSPD7b4Y+MrtAyaHLGD/z2kRD+ROaW4+F3jW3Qu2hSuB/zykRj+QNRa58RPE+uzs0upy2sBPy29oxjRR+HJ+pNZEHiPXLSQSW+s6hG45yty/8AjT94NCleWd1p9y1ve201tOvWOZCjfkagVWdwqglmIAA6kntXpei/EW11xE0bx7aw6hZP8qXxTbLAfUkdvcYI966W1+C1ra+JbLUbXV/N0uKVZ/IkTc7AHIAccEHjnHSlzW3C3Y8Xv9OvdLufs2oWk1rPtDeXMhVsHocGqhrvvjJKZfiPdAnOy3hX/wAdz/WuBNUndXBiUlLSUxCUlLSGgBKSlpKQCUlLSUAJRRRQAUUUUALS0lLQAtLSUtAC0tJS0ALS0lLTAWlpKWgBaWkrV8N6NJ4h8R6fpMYP+kzBXI/hTqx/IGgD3j4SaD/Y/gmK5kTbcai32hsjnZ0Qflz/AMCrumVXVkdQyMCGU9weorzfQ/Gsdx8WtQ0GJwumCAWdooPyiSHJOPr8w/4CK9Jrnle+poj5T8U6I3h3xRqGlEHZDKfKJ7xnlT+RFZFexfHDQsrp+vxJ0/0W4I/EoT/48Pyrxytou6uQx1GaSlzVCDNXtE01tZ12w0xDg3U6RZHYE8n8s1RzXW/DAK3xH0jd2ZyPrsak9ECPpC2toLK1htLWMR28CCONB0VQMAV4R8a76Sfxnb2ZY+Va2iFV7bnJJP6D8q98rw7436RLDrtjrKqTBcwCBm7K6EkD8Qf0NYw+IuWx5XSUtJW5Ahr3b4MeJ31HR59CupC02ngPASeTCTjH/AT+hFeE11/wv1JtN+IelkNhLlmtn9w44/UCpmroa3Jfi0c/EnUvZIR/5DFcRXa/Fj/kpOqfSL/0WtcVTjsge4lJS0lMQlJS0lACUlLSUgEpKWkoASiiigBBS0gpaAFpaSgUAOpRTRS0AOpaaKUUAOpRTaWmA6lFNFLQA6vRvh0q+H/DviHxnMo3WsJtLLPeZ8Zx+a/rXnADEgKCzE4AHc+lekfEIr4c8LeHvBkRAkii+232O8rZwD+Jb8hUy7DRwmnajcaZqtrqcLk3FvMs4buxByfz5/OvrWyvIdRsLe+t2DQ3ESyoR6MM18f19AfBnXP7R8IyaZI2ZtNl2qD18puV/I7hU1FpccWdj4n0VPEXhnUNKYDdPEfLJ/hkHKn8wK+UmV43aORSrqSrKexHBFfYdfOPxW0L+xfG880abbbUF+1R46Bjw4/765/GlTfQckcTS5ptGa1IHZrV8MaqNE8U6Xqbfct7hWf/AHOjfoTWRmigD7EDKyhkYMjDKsOhB6GqOtaNY+INJn0zUYvMt5hzjhlPZlPYivN/hR4+iurSHw3qswW6iGyylc8Sp2jJ/vDt6j6V6vXM00zTc+YfGPgbVPB92ftCGfT3bEN4i/K3s391vb8q5Y19hzwQ3UEkFxEk0Mg2vHIoZWHoQa8h8Y/BoN5l94WIB5ZtPkbg/wDXNj/I/nWsZ9yXE8ZNT2d5Pp99b3ts+y4t5FkjYjOGByOO9Nubee0uZLa5hkhnjO14pFKsp9wahrQkvazrF9r+qzanqMqy3c2N7qgUHAwOBx0FUKKQ0ABpKKSgApKDSGkAGkopDQAUlBooASkNLSGgApaSloAWikpaAFpaSloAWlpKWgBaWmilpgOpabS0Adn8MNDTWvG1s9wB9jsAby4J6AJ90H/gWPyNY3inXH8R+KNR1ZidtxMTGD2jHCj8gK9K8FeFtVHwm1OfSoo/7T1xvLRpJAmy3B2k5Pr835iuaHwc8YYx9nsf/Atai6uO2hwddv8ACnXf7F8c20cj7be/BtZMngE8of8AvoD86m/4U54x/wCfex/8C1pU+EHjON1kjhslkQhlYXa8Ecg024tWuFmfRVeffGHQv7U8G/b4kzcaa/nZHUxnhx/I/hXdWTXL6fbNeoqXZiXzlVtwD4+bB7jOafPbxXdtLbTqGhmRo5FPdSMH9KwTs7lnx7mjNX9c0qXQtdvtKmzvtZmjyf4l/hP4jBrPzXSZi5opM0ZoAUEgggkEHIIOCDXrfgn4wSWwi07xOzSwjCx36jLqP+mg/iH+0OfXNeR0ZpNJ7jTsfYVtc297bR3NrPHPBINySxsGVh7EVLXyv4X8Z6z4SufM064zAxzLay8xSfh2PuOa988HfEHSPGEYihb7LqKjL2crfMfUof4h+vtWMoNFJ3LPivwTo/i+2230Pl3ariK8iAEiex/vD2P6V89+LfBereD70RX8YktpCRDdxj93J7ezex/WvqequpabZaxp81hqFulxazDDxuP1HoR2NEZtA1c+P6Sum8c+D7jwbrptHZpbOYGS1nI++meh/wBodD+feuYrZO5AUlFIaYBSUtJSASkpaSgBKKKSgApKWkoAKBRRQAtLSUUALS0lLQAtLSUtAC0tNpaAHVc0nTZ9Z1ez0y3GZbqZYl9snk/gMn8KpV6R8JrWGwl1jxfeLm20a1by8/xSsOn1xx/wKhuyGiL4sarH/wAJHbaBp7sljotutsqo2BvwN3T0G0fnXBedL/z2l/77NLdXU19eT3dw26eeRpZGPdmOT/OoqErICXzpv+e0v/fZo86b/ntJ/wB9mo6KYj234Ha8ZrXUdCnkLPEwuoNxydp4cfng/jXrtfK3gjXf+Ed8Y6dqLNiESeVP/wBc3+Vvyzn8K+qfocj1FYVFZlx2PEPjhoXkanY69EmEuU+zzkf315U/iuR/wGvJ819TeOdB/wCEj8Hahp6qDP5fmwe0icj8+R+NfK+fUYPoa0pu6FJajs1v+CtAg8UeK7TSLmeWCKZXLSRAFhtUnjPHauezXb/CTn4k6d/1zm/9FmqewkcxrenjSde1DTgzMtrcPCGYckKcAn8KoV2fxW086f8AEXUjjCXQS5X33Lz+oNcXQndCYU6OWSCVJYZHjlQhkdDhlI7gjpTKKYH0D8MfiM3iVP7H1d1/taJN0cvT7So6/wDAx39evrXpNfHunajPpOp2uo2rlJ7WVZUI9Qen49Pxr6+t50urWG5j+5NGsi/RgD/WsJxsy0zi/i1o0ereAbyfYDPp5FzE3cAHDD8VP6CvmuvrLxgVHgrXC/3fsM2f++TXyWPuj6VdPYUhaSikqyQpKWkoASkpaSgApKKKAENFFFACClpKWgBaKSloAWikpaAFpaQUUAOpRTaUcnjk0AL0r2DxTpz+D/ghp2kldl1qNykl165ILkH6YUfhVL4Y/DW81DUbfXNbtWg0+BhJBBMuGuHHIJB6IDzz1r0n4n+F7vxX4TMFgA99bTC4ijJx5nBDLn1IPH0qJSV0iktD5loqzeabf6dM0N7Y3NtIpwVliZcfmKq5rQkdRmkpc0ABAIwe9fUPw510+IPA+n3EjbriBfs0577k4z+Iwfxr5gjiklYLFFJIx6BFLH9K+gPgxouq6R4dv31K2ltkurhZII5RtYgLgtjqAePyrOpsVE9JBwcivmL4k6D/AMI944voY0221yftUHptfkj8GyK+na4P4o+CpvFmiw3GnoG1OxJMaE481D95M+vAI/8Ar1EHZjaPnHNdz8IefiVYe0M//os1xVxbz2k7wXMEsEyHDRyoVYH3Brt/g6M/Eiz9rec/+OVrLZkrc7b44eH3udLstfgQsbQmC4wOkbHKt+Dcf8Crw6vqe58V+FL7Urvw1ealatcNmCa3myqsSOU3Hgn8a8O8c/DbU/Cl1JcWsUt3o7HMc6ruaIf3ZAOmP73Q1MH0Y2jiM0UgYHoQaCQOSQK0JEYFlKgZJ4A9TX2FpNu1pothbP8Afitokb6hQDXhPwx+HV3rGp2+tarbNDpVuwkjSRcG5ccjAP8ACDyT36Cvcdb13TvD2nSahqt0kEC9M/ec/wB1R1Y+wrGo7uyLijlfi5rUek+Abu334n1Ai2jXPJGcufoAP1FfNddL438YXXjPXTeyoYbWIGO1t858tM9T6sep/LtXNVcVZEt3A0lFJVCCkooNACUUUlABRRSUAFJS0lABRQKKAFooooAWgUUUALS0lFAC1ZsL2bTdRtr632+dbSrLHvGRuU5GR3FVqKAPQG+M3jV3LfbbQZ7C0Wk/4XH40/5/bX/wESuBpaXKuw7s9AHxm8ZFdslxYyrjGHtFNcCTkk+vNNpaEkthC0uabRmqA6zw98RPEHhfS/7O0qS1jg8xpcvAHbccZ5P0rSPxj8aE5+3Wv/gIlcFRS5UO53n/AAuLxp/z/Wv/AICJSj4xeMx1vbQ/W0SuCozS5UF2dD4n8Z6x4vNqdWa3ZrYMI2ii2H5sZz69BTfCHieXwhr66vBaRXUixPGI5GKj5sc5H0rAzRTsrWET3ty9/fXN3NzJcStK/wBWJJ/nXTeHviR4m8NosNtffabRRj7NdjzEA9Aeo/A1yVFFkwPSpPiR4Z1Jt+sfD/T5ZT96S3cIT+n9asWfxF8EaY4lsPh/Gkw5V3kRiD9SDXlmaKXKh3PU9U+OmuXKMmm6dZ2OeBI5Mzj6ZwP0rzrVdZ1LXLw3eqX013P2aVs7R6AdAPpVHNJQklsFwoopKYgpKKKACkoooAQ0UUUAJRRRQAlFFBoASlpKKAFpaSigBaWkooAWlpKKAFpc0maKAFpabS0ALS03NLQAtGaSlzQAtFJRQAtGaTNGaAFzRmkzRQAtFJRQAZoozSUALSUUmaAFpKKSgBc0lFJmgBaSiigApKKKACkoooAKSiigBKWkooAWlpKKAFpaSigBaWkooAWikpaAFopKM0ALmlpKKAFpc02jNADqKSigBaKSigBaKSigBaKSigBc0lJmigBaTNFFABRSUUAFFFJQAuaSiigApKKKACkoooAKSiigAopKWgBaKSloAKWkooAWlpKKAFopM0tAC0UlFAC0UZooAWikooAWikzRmgBaKTNGaAFopM0ZoAWikzRmgBaKSigAooozQAUUlFABRRSZoAWkoooAKSiigAoopKACiikoAKKSloAWikpaAClpKKAFpc0lFAC0UlLQAuaKSigBaKSloAKXNJRQAtFJRQAtFJRQAtFJRQAtFJRQAuaSiigAoopKAFozSUUAFFFJQAuaSiigApM0UUAFFFJQAUUUlABRSCloAWikpaAFzRSUUALRmiigBaKSloAKWkooAWikozQAtFFFABmjNFFAC0UlFAC0UlFABmjNFFABRRRQAUUmaKAFpKKKACiikoAM0UUUAFJRRQAUUZpKACiikNABRSA0tAC0UlLQAZpaSigBaKTNLQAtFJRmgBaM0ZooAXNFJRQAtFJRmgBaKTNLQAUUUUAFFFFABRRSZoAWikzRQAtFJRQAZooozQAUUmaKACiikzQAtJmiigAopM0UAFFFITQB/9k='            // чистый base64, без data:-префикса
+  },
+
+  /* --- Ряд круглых кнопок. Порядок здесь = порядок на экране --- */
+  actions: [
+    { id:'savecontact', label:'Сохранить контакт', href: c => c.vcfUrl },
+    { id:'phone',       label:'Позвонить',         href: c => 'tel:' + c.phone },
+    { id:'whatsapp',    label:'WhatsApp',          href: c => c.whatsapp + (c.whatsappText ? '?text=' + encodeURIComponent(c.whatsappText) : '') },
+    { id:'instagram',   label:'Instagram',         href: c => c.instagram },
+    { id:'email',       label:'Email',             href: c => c.email ? 'mailto:' + c.email : '' },
+    { id:'website',     label:'Сайт',              href: c => c.website }
+  ]
+};
+
+/* ============================================================================
+   ЯЗЫК СТРАНИЦЫ
+   Выбор запоминается в браузере посетителя. При первом заходе берём язык
+   телефона, а если он не из наших — язык по умолчанию.
+   ========================================================================== */
+const LANG_KEY = 'pb-lang';
+let LANG = (function pickLang(){
+  const langs = CONFIG.i18n.langs;
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && langs[saved]) return saved;
+  } catch (e) { /* приватный режим — просто идём дальше */ }
+  const nav = (navigator.language || '').slice(0, 2).toLowerCase();
+  if (langs[nav]) return nav;
+  return CONFIG.i18n.fallback;
+})();
+
+/** Словарь текущего языка. */
+function dict(){
+  return CONFIG.i18n.langs[LANG] || CONFIG.i18n.langs[CONFIG.i18n.fallback];
+}
+
+/** Смена языка: без перезагрузки, страница просто переписывает свои тексты. */
+function setLang(code){
+  if (!CONFIG.i18n.langs[code] || code === LANG) return;
+  LANG = code;
+  try { localStorage.setItem(LANG_KEY, code); } catch (e) { /* не смогли запомнить — не беда */ }
+  applyTexts();
+}
+
+/* ============================================================================
+   ЦВЕТ СТРАНИЦЫ
+   Выбор посетителя запоминается так же, как язык. Тема перекрашивает
+   CSS-переменные и переключает кнопку контакта на файл с фото в её цвете.
+   ========================================================================== */
+const THEME_KEY = 'pb-theme';
+let THEME = (function pickTheme(){
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    const found = CONFIG.themes.find(function(t){ return t.id === saved; });
+    if (found) return found;
+  } catch (e) { /* приватный режим — берём тему по умолчанию */ }
+  return CONFIG.themes[0];
+})();
+
+/** '#C9A227' -> '201,162,39' — для rgba(var(--gold-rgb), .x) */
+function hexRgb(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(',');
+}
+
+/** Файл контакта этой темы: первая — vcfUrl, остальные — vcfUrl с -id. */
+function vcfFor(t){
+  const url = CONFIG.contacts.vcfUrl;
+  return t === CONFIG.themes[0] ? url : url.replace(/\.vcf$/i, '-' + t.id + '.vcf');
+}
+
+/** Кружок темы в переключателе. */
+function swatch(t){
+  return t.scheme === 'light'
+    ? 'linear-gradient(135deg, ' + t.bg2 + ' 0%, ' + t.bg + ' 45%, ' + t.goldSoft + ' 100%)'
+    : 'linear-gradient(135deg, ' + t.goldSoft + ' 0%, ' + t.gold + ' 50%, ' + t.goldDeep + ' 100%)';
+}
+
+/** Перекрашивает страницу в тему t. */
+function applyTheme(t){
+  const dark = t.scheme !== 'light';
+  const vars = {
+    '--bg': t.bg, '--bg-2': t.bg2, '--bg-3': t.bg3, '--glow-top': t.glowTop,
+    '--gold': t.gold, '--gold-rgb': hexRgb(t.gold), '--gold-soft': t.goldSoft, '--gold-deep': t.goldDeep,
+    '--cta-end': t.ctaEnd, '--cta-text': t.ctaText, '--icon': t.icon || t.goldSoft,
+    '--text': t.text, '--muted': t.muted,
+    // светлой теме нужны тёмные полупрозрачные слои вместо светлых
+    '--surface':      dark ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.62)',
+    '--surface-line': 'rgba(' + hexRgb(dark ? t.goldSoft : t.gold) + (dark ? ',.20)' : ',.34)'),
+    '--pill':         dark ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,.55)',
+    '--toast-bg':     dark ? 'rgba(20,20,22,.94)' : 'rgba(255,255,255,.95)',
+    '--photo-bg':     t.bg2,
+    '--shadow':       dark ? 'rgba(0,0,0,.55)' : 'rgba(70,52,12,.22)',
+    '--dust':         dark ? t.goldSoft : t.gold
+  };
+  const root = document.documentElement;
+  for (const k in vars) root.style.setProperty(k, vars[k]);
+  root.style.colorScheme = dark ? 'dark' : 'light';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = t.bg;
+
+  // «Сохранить контакт» ведёт на файл с фото в рамке этого цвета
+  document.querySelectorAll('[data-id="savecontact"]').forEach(function(a){ a.href = vcfFor(t); });
+
+  document.querySelectorAll('#themes button').forEach(function(btn){
+    btn.setAttribute('aria-pressed', String(btn.dataset.theme === t.id));
+  });
+}
+
+/** Смена цвета по нажатию: новая тема расходится кругом от кружка. */
+function setTheme(id, from){
+  const t = CONFIG.themes.find(function(x){ return x.id === id; });
+  if (!t || t === THEME) return;
+  THEME = t;
+  try { localStorage.setItem(THEME_KEY, id); } catch (e) { /* не смогли запомнить — не беда */ }
+
+  const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || calm || !from) { applyTheme(t); return; }
+
+  const r = from.getBoundingClientRect();
+  const x = r.left + r.width / 2, y = r.top + r.height / 2;
+  const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  const vt = document.startViewTransition(function(){ applyTheme(t); });
+  vt.ready.then(function(){
+    document.documentElement.animate(
+      { clipPath: ['circle(0px at ' + x + 'px ' + y + 'px)', 'circle(' + end + 'px at ' + x + 'px ' + y + 'px)'] },
+      { duration: 700, easing: 'cubic-bezier(.22,.61,.36,1)', pseudoElement: '::view-transition-new(root)' }
+    );
+  }).catch(function(){ /* анимация не удалась — цвет всё равно уже сменился */ });
+}
+
+/** Подставляет все тексты выбранного языка в уже построенную страницу. */
+function applyTexts(){
+  const d = dict(), b = CONFIG.brand, c = CONFIG.contacts;
+
+  document.documentElement.lang = LANG;
+  document.title = d.name + ' — ' + b.name;
+
+  const photo = document.getElementById('photo');
+  if (photo) photo.alt = d.name + ' — ' + d.role;
+
+  document.getElementById('name').textContent = d.name;
+  document.getElementById('role').textContent = d.role;
+  document.getElementById('bio').textContent  = d.bio;
+
+  document.querySelectorAll('.cta span').forEach(function(el){ el.textContent = d.ctaLabel; });
+
+  // Подписи круглых кнопок + текст, с которым открывается WhatsApp
+  document.querySelectorAll('.links a').forEach(function(a){
+    const label = d.actions && d.actions[a.dataset.id];
+    if (label) { a.setAttribute('aria-label', label); a.title = label; }
+    if (a.dataset.id === 'whatsapp' && c.whatsapp) {
+      a.href = c.whatsapp + (d.whatsappText ? '?text=' + encodeURIComponent(d.whatsappText) : '');
+    }
+  });
+
+  const hint = document.querySelector('.scroll-hint');
+  if (hint) hint.setAttribute('aria-label', d.scrollAria);
+
+  const rk = document.getElementById('routesKicker');
+  if (rk) {
+    rk.textContent = d.routesKicker;
+    document.getElementById('routesTitle').textContent = d.routesTitle;
+    document.querySelectorAll('.route li').forEach(function(li, i){
+      if (li.classList.contains('finale')) {          // последняя карточка «по всему миру»
+        li.querySelector('b').textContent = d.finale;
+        li.querySelector('img').alt       = d.finale;
+        return;
+      }
+      const city = (d.cities || [])[i];
+      if (!city) return;
+      li.querySelector('b').textContent     = city.city;
+      li.querySelector('small').textContent = city.note || '';
+      li.querySelector('img').alt           = city.city;
+    });
+  }
+
+  const outro = document.getElementById('outroText');
+  if (outro) outro.textContent = d.outro;
+
+  const shareSpan = document.querySelector('#shareBtn span');
+  if (shareSpan) shareSpan.textContent = d.share;
+
+  const promoSpan = document.querySelector('#promo span');
+  if (promoSpan) promoSpan.textContent = d.promo;
+
+  const box = document.getElementById('langs');
+  box.setAttribute('aria-label', d.groupLabel);
+  box.querySelectorAll('button').forEach(function(btn){
+    btn.setAttribute('aria-pressed', String(btn.dataset.lang === LANG));
+  });
+
+  const themeBox = document.getElementById('themes');
+  themeBox.setAttribute('aria-label', d.themeGroup);
+  themeBox.querySelectorAll('button').forEach(function(btn){
+    const name = (d.themes || {})[btn.dataset.theme] || btn.dataset.theme;
+    btn.setAttribute('aria-label', name); btn.title = name;
+  });
+}
+
+/**
+ * Проявление блоков по мере прокрутки. Если IntersectionObserver недоступен,
+ * показываем всё сразу: страница не должна остаться пустой ни при каких условиях.
+ */
+function revealOnScroll(nodes){
+  if (!('IntersectionObserver' in window)) {
+    nodes.forEach(function(n){ n.classList.add('is-in'); });
+    return;
+  }
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px' });
+  nodes.forEach(function(n){ io.observe(n); });
+}
+
+/* --- Иконки 24x24: тонкие штриховые + фирменные глифы соцсетей --- */
+const ICONS = {
+  savecontact: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9.5" cy="8" r="3.6"/><path d="M3 20a6.5 6.5 0 0 1 13 0"/><path d="M19 9.5v5.5M21.75 12.25h-5.5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 13.3a1.6 1.6 0 0 1 2.2 0l1.7 1.6a1.6 1.6 0 0 1 0 2.3l-.8.8c-1.1 1.1-2.8 1.3-4.2.5a20.6 20.6 0 0 1-8-8c-.8-1.4-.6-3.1.5-4.2l.8-.8a1.6 1.6 0 0 1 2.3 0l1.6 1.7a1.6 1.6 0 0 1 0 2.2l-.9.9c.9 1.9 2.5 3.5 4.4 4.4z"/></svg>',
+  telegram: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.6 18.9 19.2c-.23 1.02-.84 1.27-1.7.79l-4.7-3.46-2.27 2.18c-.25.25-.47.47-.96.47l.34-4.85 8.8-7.95c.38-.34-.08-.53-.6-.19L6.14 12.02l-4.66-1.46c-1.01-.32-1.03-1.01.21-1.49L20.6 3.13c.84-.31 1.58.2 1.34 1.47z"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.62.7.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.7.25-1.29.18-1.42-.08-.12-.28-.2-.58-.35M12.05 21.78h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.89 9.89-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.43 9.89-9.88 9.89m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45c6.55 0 11.89-5.34 11.89-11.9 0-3.17-1.24-6.16-3.48-8.41"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.3" cy="6.7" r="1.05" fill="currentColor" stroke="none"/></svg>',
+  email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="5" width="18.4" height="14" rx="2.6"/><path d="m3.4 7.4 7.5 5.3a2 2 0 0 0 2.2 0l7.5-5.3"/></svg>',
+  website: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.1"/><path d="M2.9 12h18.2"/><path d="M12 2.9c2.3 2.5 3.6 5.7 3.6 9.1s-1.3 6.6-3.6 9.1c-2.3-2.5-3.6-5.7-3.6-9.1S9.7 5.4 12 2.9z"/></svg>',
+  map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10.4c0 5.4-6.3 10.8-7.6 11.8a.7.7 0 0 1-.8 0C10.3 21.2 4 15.8 4 10.4a8 8 0 1 1 16 0z"/><circle cx="12" cy="10.2" r="2.9"/></svg>'
+};
+
+/* ============================================================================
+   РЕНДЕР СТРАНИЦЫ ИЗ КОНФИГА
+   ========================================================================== */
+(function render(){
+  const p = CONFIG.person, b = CONFIG.brand, c = CONFIG.contacts;
+
+  // Контент
+  document.getElementById('photo').src = CONFIG.photo.page;
+
+  // Главная кнопка собирается из CONFIG.cta (подпись подставит applyTexts)
+  const cta = document.getElementById('ctaBtn');
+  cta.href = typeof CONFIG.cta.href === 'function' ? CONFIG.cta.href(c) : CONFIG.cta.href;
+  cta.innerHTML = (ICONS[CONFIG.cta.id] || '') + '<span></span>';
+  if (/^https?:/i.test(cta.href)) { cta.target = '_blank'; cta.rel = 'noopener noreferrer'; }
+
+  // Название бренда и слоган не переводятся: это фирменные слова
+  document.getElementById('brandName').textContent = b.name;
+  if (b.tagline) document.getElementById('tagline').textContent = b.tagline;
+  else document.getElementById('tagline').remove();
+  // Круглые кнопки
+  const nav = document.getElementById('links');
+  CONFIG.actions.forEach(function(a){
+    const href = typeof a.href === 'function' ? a.href(c) : a.href;
+    if (!href) return;                       // пункт без данных просто не рисуем
+    const el = document.createElement('a');
+    el.href = href;
+    el.innerHTML = ICONS[a.id] || '';
+    el.dataset.id = a.id;
+    el.style.setProperty('--i', nav.children.length);   // очередь появления
+    // внешние ссылки — в новой вкладке; tel:/mailto: — в текущей
+    if (/^https?:/i.test(href)) { el.target = '_blank'; el.rel = 'noopener noreferrer'; }
+    nav.appendChild(el);
+  });
+  // Сообщаем CSS фактическое число кнопок — от него считается их размер
+  nav.style.setProperty('--n', nav.children.length || 1);
+
+  // Кружки переключения цвета
+  const themeBox = document.getElementById('themes');
+  CONFIG.themes.forEach(function(t){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.theme = t.id;
+    btn.innerHTML = '<i></i>';
+    btn.firstChild.style.setProperty('--sw', swatch(t));
+    btn.addEventListener('click', function(){ setTheme(t.id, btn); });
+    themeBox.appendChild(btn);
+  });
+  applyTheme(THEME);
+
+  // Золотая пыль. Кому движение мешает — её просто нет
+  if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    const dust = document.createElement('div');
+    dust.className = 'dust';
+    dust.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement('i');
+      s.style.left = (Math.random() * 100).toFixed(1) + '%';
+      s.style.setProperty('--size',  (1.4 + Math.random() * 2.2).toFixed(1) + 'px');
+      s.style.setProperty('--dur',   (10 + Math.random() * 10).toFixed(1) + 's');
+      s.style.setProperty('--delay', (-Math.random() * 20).toFixed(1) + 's');   // сразу в полёте
+      s.style.setProperty('--drift', Math.round((Math.random() - .5) * 70) + 'px');
+      dust.appendChild(s);
+    }
+    document.body.prepend(dust);
+  }
+
+  // Кнопки переключения языка
+  const langBox = document.getElementById('langs');
+  CONFIG.i18n.order.forEach(function(code){
+    const d = CONFIG.i18n.langs[code];
+    if (!d) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.lang = code;
+    btn.textContent = d.label;
+    btn.addEventListener('click', function(){ setLang(code); });
+    langBox.appendChild(btn);
+  });
+
+  applyTexts();
+})();
+
+/* ============================================================================
+   vCard 3.0 — генерация и скачивание
+   ========================================================================== */
+
+/** Экранирование спецсимволов значения по RFC 2426. */
+function esc(v){
+  return String(v == null ? '' : v)
+    .replace(/\\/g, '\\\\')
+    .replace(/\r?\n/g, '\\n')
+    .replace(/,/g, '\\,')
+    .replace(/;/g, '\\;');
+}
+
+/**
+ * Сворачивание длинных строк: не более 75 символов, продолжение — с пробела.
+ * Критично для PHOTO (base64): без этого часть парсеров рвёт файл.
+ * Строки с не-ASCII не режем, чтобы не разорвать многобайтовый символ.
+ */
+function fold(line){
+  if (line.length <= 75 || /[^\x00-\x7F]/.test(line)) return line;
+  const parts = [line.slice(0, 75)];
+  for (let i = 75; i < line.length; i += 74) parts.push(' ' + line.slice(i, i + 74));
+  return parts.join('\r\n');
+}
+
+/** Собирает текст .vcf из CONFIG. */
+function buildVCard(){
+  const p = CONFIG.person, b = CONFIG.brand, c = CONFIG.contacts, ad = c.address;
+  const L = [];
+
+  L.push('BEGIN:VCARD');
+  L.push('VERSION:3.0');
+  L.push('N:' + esc(p.lastName) + ';' + esc(p.firstName) + ';;;');
+  L.push('FN:' + esc(p.firstName + ' ' + p.lastName + (p.company ? ' — ' + p.company : '')));
+
+  // Кириллическое написание имени — видно в карточке контакта
+  if (p.phoneticFirst) L.push('X-PHONETIC-FIRST-NAME:' + esc(p.phoneticFirst));
+  if (p.phoneticLast)  L.push('X-PHONETIC-LAST-NAME:'  + esc(p.phoneticLast));
+
+  // пустые поля пропускаем: пустая строка в контакте выглядит как брак
+  if (p.company) L.push('ORG:' + esc(p.company));
+  if (p.title)   L.push('TITLE:' + esc(p.title));
+  if (c.phone)   L.push('TEL;TYPE=CELL,VOICE:' + c.phone);
+  if (c.email)   L.push('EMAIL;TYPE=INTERNET:' + c.email);
+  if (c.website) L.push('URL:' + c.website);                 // сайт — основной URL
+
+  // Соцсети: группы item + X-ABLabel, чтобы в телефоне подписи читались словами,
+  // а не одинаковым «URL». iOS показывает метку, Android её игнорирует, но ссылку сохраняет.
+  [
+    ['Telegram',    c.telegram],
+    ['WhatsApp',    c.whatsapp],
+    ['Instagram',   c.instagram],
+    ['Google Maps', c.maps]
+  ].filter(function(pair){ return !!pair[1]; })
+   .forEach(function(pair, i){
+     const g = 'item' + (i + 1);
+     L.push(g + '.URL:' + pair[1]);
+     L.push(g + '.X-ABLabel:' + esc(pair[0]));
+   });
+
+  if (c.instagram) L.push('X-SOCIALPROFILE;TYPE=instagram:' + c.instagram);
+
+  if (ad.street || ad.city || ad.country) {
+    L.push('ADR;TYPE=WORK:;;' + esc(ad.street) + ';' + esc(ad.city) + ';' + esc(ad.region) + ';' + esc(ad.zip) + ';' + esc(ad.country));
+  }
+  if (b.tagline) L.push('NOTE:' + esc(b.tagline));
+
+  // Фото контакта (base64) — самая длинная строка, сворачивается функцией fold()
+  if (CONFIG.photo.vcard) L.push('PHOTO;ENCODING=b;TYPE=JPEG:' + CONFIG.photo.vcard);
+
+  L.push('END:VCARD');
+
+  return L.map(fold).join('\r\n') + '\r\n';   // CRLF обязателен по спецификации
+}
+
+/* --- Тост --- */
+let toastTimer;
+function toast(text){
+  const el = document.getElementById('toast');
+  el.textContent = text;
+  el.classList.add('is-visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('is-visible'); }, 5200);
+}
+
+/**
+ * Встроенные браузеры соцсетей (Instagram, Facebook, TikTok и т.п.) часто молча
+ * блокируют скачивание файлов — в этом случае подсказываем открыть страницу снаружи.
+ */
+function isInAppBrowser(){
+  const ua = navigator.userAgent || '';
+  return /FBAN|FBAV|FB_IAB|Instagram|TikTok|MicroMessenger|Line\//i.test(ua);
+}
+
+/**
+ * Режим пересборки файла: откройте страницу с ?export в адресе и нажмите кнопку —
+ * вместо перехода по ссылке скачается свежий .vcf, собранный из текущего CONFIG.
+ * Этот файл кладётся рядом с index.html, и кнопка снова ведёт на него.
+ * Нужен только при подготовке визитки, обычный посетитель сюда не попадает.
+ */
+function exportVCard(){
+  const vcf = buildVCard();
+  const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (CONFIG.ui.vcfFileName || 'contact') + '.vcf';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 4000);
+}
+
+/* Поведение кнопок.
+   Все они — обычные ссылки, страница в переход не вмешивается: телефон делает
+   всё сам. JS добавляет только тактильный отклик, а для контакта — предупреждение
+   во встроенных браузерах соцсетей и режим пересборки файла. */
+document.querySelectorAll('.cta, .links a, .share, .promo').forEach(function(el){
+  el.addEventListener('click', function(e){
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch(err){} }
+
+    // всё дальнейшее касается только ссылки на файл контакта
+    if (el.dataset.id !== 'savecontact') return;
+
+    if (/(^|[?&])export($|[=&])/.test(location.search)) {
+      e.preventDefault();
+      exportVCard();
+      return;
+    }
+    if (isInAppBrowser()) toast(dict().toastInApp);
+  });
+});
+</script>
+<!-- Счётчик открытий. Без cookies и слежки: статистика видна на https://m1ran21.goatcounter.com -->
+<script data-goatcounter="https://m1ran21.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script></body>
+</html>
